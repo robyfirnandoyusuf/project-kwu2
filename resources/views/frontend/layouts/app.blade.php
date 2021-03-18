@@ -1,6 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="zxx">
+
+<!-- Mirrored from theme-vessel-templates.theme-vessel.ey.r.appspot.com/xero/index-9.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Mar 2021 13:08:10 GMT -->
 <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -22,6 +23,7 @@
     <link type="text/css" rel="stylesheet" href="/frontend-assets/css/leaflet.css">
     <link type="text/css" rel="stylesheet" href="/frontend-assets/css/slick.css">
     <link type="text/css" rel="stylesheet" href="/frontend-assets/css/slick-theme.css">
+    <link type="text/css" rel="stylesheet" href="/frontend-assets/css/slick-theme.css">
     <link type="text/css" rel="stylesheet" href="/frontend-assets/css/map.css">
     <link type="text/css" rel="stylesheet" href="/frontend-assets/css/jquery.mCustomScrollbar.css">
     <link type="text/css" rel="stylesheet" href="/frontend-assets/fonts/font-awesome/css/font-awesome.min.css">
@@ -35,7 +37,6 @@
 
     <!-- Custom Stylesheet -->
     <link type="text/css" rel="stylesheet" href="/frontend-assets/css/style.css">
-    <link type="text/css" rel="stylesheet" href="/frontend-assets/css/skins/default.css">
     <link rel="stylesheet" type="text/css" id="style_sheet" href="/frontend-assets/css/skins/default.css">
 
 </head>
@@ -52,7 +53,7 @@
         <div class="row">
             <div class="col-lg-9 col-md-9 col-sm-7">
                 <div class="list-inline">
-                    <a href="tel:1-7X0-555-8X22"><i class="fa fa-phone"></i>+0477 85X6 552</a>
+                    <a href="tel:1-7X0-555-8X22"><i class="fa fa-phone"></i>1-7X0-555-8X22</a>
                     <a href="tel:info@themevessel.com"><i class="fa fa-envelope"></i>info@themevessel.com</a>
                     <a href="#" class="mr-0"><i class="fa fa-clock-o"></i>Mon - Sun: 8:00am - 6:00pm</a>
                 </div>
@@ -78,28 +79,28 @@
         <div class="row">
             <div class="col-12">
                 <nav class="navbar navbar-expand-lg navbar-light rounded">
-                    <a class="navbar-brand logo" href="index.html">
+                    <a class="navbar-brand logo navbar-brand d-flex w-50 mr-auto" href="index-2.html">
                         <img src="/frontend-assets/img/logos/black-logo.png" alt="logo">
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="fa fa-bars"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="navbar">
-                        <ul class="navbar-nav justify-content-end ml-auto">
+                    <div class="navbar-collapse collapse w-100" id="navbar">
+                        <ul class="navbar-nav ml-auto">
                             <li class="nav-item dropdown active">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Index
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="index.html">Index 1</a></li>
-                                    <li><a class="dropdown-item" href="index-2.html">Index 2</a></li>
-                                    <li><a class="dropdown-item" href="index-3.html">Index 3</a></li>
-                                    <li><a class="dropdown-item" href="index-4.html">Index 4</a></li>
-                                    <li><a class="dropdown-item" href="index-5.html">Index 5</a></li>
-                                    <li><a class="dropdown-item" href="index-6.html">Index 6</a></li>
-                                    <li><a class="dropdown-item" href="index-7.html">Index 7</a></li>
-                                    <li><a class="dropdown-item" href="index-8.html">Index 8 (Map)</a></li>
-                                    <li><a class="dropdown-item" href="index-9.html">Index 9 (Video)</a></li>
+                                    <li><a class="dropdown-item" href="index-2.html">Index 1</a></li>
+                                    <li><a class="dropdown-item" href="index-3.html">Index 2</a></li>
+                                    <li><a class="dropdown-item" href="index-4.html">Index 3</a></li>
+                                    <li><a class="dropdown-item" href="index-5.html">Index 4</a></li>
+                                    <li><a class="dropdown-item" href="index-6.html">Index 5</a></li>
+                                    <li><a class="dropdown-item" href="index-7.html">Index 6</a></li>
+                                    <li><a class="dropdown-item" href="index-8.html">Index 7</a></li>
+                                    <li><a class="dropdown-item" href="index-9.html">Index 8 (Map)</a></li>
+                                    <li><a class="dropdown-item" href="index-10.html">Index 9 (Video)</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
@@ -279,9 +280,15 @@
                                     <a class="dropdown-item" href="contact-3.html">Contact 3</a>
                                 </div>
                             </li>
-                            <li class="nav-item sb2">
-                                <a  href="submit-property.html" class="submit-btn">
-                                    Submit Property
+                            <li class="nav-item dropdown">
+                                <a href="#full-page-search" class="nav-link">
+                                    <i class="fa fa-search"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="open-offcanvas nav-link" href="#">
+                                    <span></span>
+                                    <span class="fa fa-bars"></span>
                                 </a>
                             </li>
                         </ul>
@@ -292,7 +299,38 @@
     </div>
 </header>
 <!-- main header end -->
-@yield('body')
+
+<!-- Banner start -->
+<div class="banner banner_video_bg" id="banner">
+    <div class="pattern-overlay">
+        <a id="bgndVideo" class="player" data-property="{videoURL:'https://www.youtube.com/watch?v=5e0LxrLSzok',containment:'.banner_video_bg', quality:'large', autoPlay:true, mute:true, opacity:1}">bg</a>
+    </div>
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="carousel-caption banner-slider-inner d-flex h-100 text-center">
+                    <div class="carousel-content container b1-inner">
+                        <div class="text-center">
+                            <div id="typed-strings">
+                                <p>Buy, Sell or Rent</p>
+                            </div>
+                            <h1 class="typed-text">&nbsp;
+                                <span id="typed"></span>
+                            </h1>
+                            <p class="text-p" data-animation="animated fadeInUp delay-10s">
+                                This is real estate website template based on Bootstrap 4 framework.
+                            </p>
+                            <a data-animation="animated fadeInUp delay-10s" href="#" class="btn btn-white">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- banner end -->
+
+@yield('content')
 <!-- Footer start -->
 <footer class="footer">
     <div class="container footer-inner">
@@ -431,7 +469,7 @@
 <div id="full-page-search">
     <button type="button" class="close">×</button>
     <form action="#" class="search">
-        <input type="search" value="" placeholder="type keyword(s) here"/>
+        <input type="search" value="" placeholder="type keyword(s) here" />
         <button type="button" class="btn btn-sm btn-color">Search</button>
     </form>
 </div>
@@ -537,7 +575,7 @@
             </aside>
             <aside class="canvas-widget">
                 <ul class="menu">
-                    <li class="menu-item menu-item-has-children"><a href="index.html">Home</a></li>
+                    <li class="menu-item menu-item-has-children"><a href="index-2.html">Home</a></li>
                     <li class="menu-item"><a href="properties-grid-leftside.html">Properties List</a></li>
                     <li class="menu-item"><a href="properties-details.html">Property Detail</a></li>
                     <li class="menu-item"><a href="blog-single-sidebar-right.html">Blog</a></li>
@@ -584,5 +622,8 @@
 <script src="/frontend-assets/js/ie-emulation-modes-warning.js"></script>
 <!-- Custom JS Script -->
 <script  src="/frontend-assets/js/app.js"></script>
+
 </body>
+
+<!-- Mirrored from theme-vessel-templates.theme-vessel.ey.r.appspot.com/xero/index-9.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 16 Mar 2021 13:08:10 GMT -->
 </html>
