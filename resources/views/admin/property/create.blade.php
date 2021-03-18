@@ -26,6 +26,17 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <label class="col-sm-2 label-on-left">Tag</label>
+                                    <div class="col-sm-10">
+                                        <div class="form-group label-floating is-empty">
+                                            <label class="control-label"></label>
+                                            <input type="text" value="Amsterdam,Washington,Sydney,Beijing" class="tagsinput" data-role="tagsinput" data-color="rose" name="tags"/>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <label class="col-sm-2 label-on-left">Jenis</label>
                                     <div class="col-lg-5 col-md-6 col-sm-3">
@@ -44,6 +55,15 @@
                                         <div class="form-group label-floating is-empty">
                                             <label class="control-label"></label>
                                             <input type="number" class="form-control" placeholder="Harga" name="price">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-2 label-on-left">Luas Tanah (m<sup>2</sup>)</label>
+                                    <div class="col-sm-10">
+                                        <div class="form-group label-floating is-empty">
+                                            <label class="control-label"></label>
+                                            <input type="number" class="form-control" placeholder="Luas Tanah" name="square_meter">
                                         </div>
                                     </div>
                                 </div>

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PropertyTag extends Model
 {
     use HasFactory;
+
+    public function tag()
+    {
+        return $this->hasOne(Tag::class, 'id', 'tag_id');
+    }
 }

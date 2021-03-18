@@ -22,6 +22,7 @@ class CreatePropertiesTable extends Migration
             $table->text('desc');
             $table->string('building_age');
             $table->string('postal_code');
+            $table->double('square_meter');
             $table->string('price');
             $table->text('address');
             $table->text('contact_name');

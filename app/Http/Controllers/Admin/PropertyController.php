@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
+use DB;
 
 use App\Models\Category;
 use App\Models\Facility;
@@ -12,6 +13,8 @@ use App\Models\Image;
 use App\Models\Property;
 use App\Models\Province;
 use App\Models\City;
+use App\Models\PropertyTag;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Http;
 
 class PropertyController extends Controller
@@ -100,10 +103,13 @@ class PropertyController extends Controller
      */
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
             $title = $request->title;
             $categoryId = $request->type;
+            $tags = explode(",", trim($request->tags));
             $price = $request->price;
+            $squareMeter = $request->square_meter;
             $desc = $request->desc;
             $fac = $request->fac;
             $cityId = $request->city_id;
@@ -121,6 +127,7 @@ class PropertyController extends Controller
             $property->price = $price;
             $property->desc = $desc;
             $property->city_id = $cityId;
+            $property->square_meter = $squareMeter;
             $property->address = $address;
             $property->postal_code = $postalCode;
             $property->building_age = $buildingAge;
@@ -128,6 +135,22 @@ class PropertyController extends Controller
             $property->contact_email = $contactEmail;
             $property->contact_phone = $contactPhone;
             $property->save();
+
+            foreach ($tags as $key => $tag) {
+                $tagM = Tag::where('tag', $tag);
+                if ($tagM->count() <= 0) {
+                    $tagId = Tag::insertGetId([
+                        'tag' => $tag
+                    ]);
+                } else {
+                    $tagId = Tag::where('tag', $tag)->first()->id;
+                }
+
+                $propertyTag = new PropertyTag;
+                $propertyTag->tag_id = $tagId;
+                $propertyTag->property_id = $property->id;
+                $propertyTag->save();
+            }
 
             foreach ($fac as $key => $fac) {
                 $facModel = new Facility;
@@ -141,7 +164,10 @@ class PropertyController extends Controller
                 'parent_id' => $property->id,
                 'type' => Image::PROPERTY
             ]);
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollback();
+            dd($e->getMessage());
             return redirect()->route('admin.property.index')->with('error', 'Property gagal dibuat !');
         }
 
@@ -170,9 +196,13 @@ class PropertyController extends Controller
         $data['title'] = 'Ubah Property';
         $data['cats'] = Category::all();
         $data['provs'] = Province::all();
-        $single = Property::with(['category', 'facs', 'city', 'images'])->whereId($id)->first();
+        $single = Property::with(['category', 'facs', 'city', 'images', 'property_tags.tag'])->whereId($id)->first();
         $data['single'] = $single;
         $data['cities'] = City::where('province_id', $single->city->province_id)->get();
+        $tags = $single->property_tags->map(function($d) {
+            return $d->tag->tag;
+        })->toArray();
+        $data['tags'] = implode(",", $tags);
         
         return view('admin.property.edit', $data);
     }
@@ -189,7 +219,9 @@ class PropertyController extends Controller
         try {
             $title = $request->title;
             $categoryId = $request->type;
+            $tags = explode(",", trim($request->tags));
             $price = $request->price;
+            $squareMeter = $request->square_meter;
             $desc = $request->desc;
             $fac = $request->fac;
             $cityId = $request->city_id;
@@ -207,6 +239,7 @@ class PropertyController extends Controller
             $property->price = $price;
             $property->desc = $desc;
             $property->city_id = $cityId;
+            $property->square_meter = $squareMeter;
             $property->address = $address;
             $property->postal_code = $postalCode;
             $property->building_age = $buildingAge;
@@ -214,6 +247,23 @@ class PropertyController extends Controller
             $property->contact_email = $contactEmail;
             $property->contact_phone = $contactPhone;
             $property->save();
+
+            PropertyTag::where('property_id', $id)->delete();
+            foreach ($tags as $key => $tag) {
+                $tagM = Tag::where('tag', $tag);
+                if ($tagM->count() <= 0) {
+                    $tagId = Tag::insertGetId([
+                        'tag' => $tag
+                    ]);
+                } else {
+                    $tagId = Tag::where('tag', $tag)->first()->id;
+                }
+
+                $propertyTag = new PropertyTag;
+                $propertyTag->tag_id = $tagId;
+                $propertyTag->property_id = $property->id;
+                $propertyTag->save();
+            }
 
             Facility::where('property_id', $id)->delete();
             foreach ($fac as $key => $fac) {

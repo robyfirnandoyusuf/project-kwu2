@@ -31,6 +31,11 @@ class Property extends Model
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
 
+    public function property_tags()
+    {
+        return $this->hasMany(PropertyTag::class, 'property_id', 'id');
+    }
+
     public function facs()
     {
         return $this->hasMany(Facility::class, 'property_id', 'id');
