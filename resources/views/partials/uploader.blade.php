@@ -68,6 +68,15 @@
                     // fire complete event to get rid of progress bar etc
                     self.emit("complete", uploadedFile);
                 })
+
+                var htmlOpts = "";
+                var thumb = '{{ $thumb }}';
+                $.each(uploadedFiles, function( index, value ) {
+                    htmlOpts += '<option value="'+value.file+'" '+(thumb == value.file ? "selected" : "")+'>'+value.file+'</option>';
+                });
+                $(img_thumb).attr('src', '/storage/upload/'+thumb);
+
+                $("#sel_thumb").html(htmlOpts).selectpicker('refresh');
                 @endif
         
                 this.on("success", function (file, responseText) {
@@ -80,6 +89,12 @@
                         type: file.mime,
                         dataURL: file.url
                     });
+                    var htmlOpts = "";
+                    $.each(uploadedFiles, function( index, value ) {
+                      htmlOpts += '<option value="'+value.name+'">'+value.name+'</option>';
+                    });
+
+                    $("#sel_thumb").html(htmlOpts).selectpicker('refresh');
                 });
 
                 // Handle added file

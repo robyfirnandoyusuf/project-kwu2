@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\Category;
 use App\Models\Facility;
@@ -16,6 +17,7 @@ use App\Models\City;
 use App\Models\PropertyTag;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Http;
+use Psy\CodeCleaner\FunctionReturnInWriteContextPass;
 
 class PropertyController extends Controller
 {
@@ -68,7 +70,7 @@ class PropertyController extends Controller
                             <i class="fas fa-pencil-alt"> </i>
                             Edit
                         </a>
-                        <a class="btn btn-danger btn-sm" href="javascript:void(0)"  onclick="return confirm(\'Anda yakin akan menghapus item ini ?\');">
+                        <a class="btn btn-danger btn-sm" href="'.route('admin.property.destroy', $data->id).'"  onclick="return confirm(\'Anda yakin akan menghapus item ini ?\');">
                             <i class="fas fa-trash"> </i>
                             Delete
                         </a>';
@@ -108,6 +110,7 @@ class PropertyController extends Controller
             $title = $request->title;
             $categoryId = $request->type;
             $tags = explode(",", trim($request->tags));
+            $thumb = $request->thumbnail;
             $price = $request->price;
             $squareMeter = $request->square_meter;
             $desc = $request->desc;
@@ -162,8 +165,10 @@ class PropertyController extends Controller
 
             Image::where('sid', \Session::get('dz-sess'))->update([
                 'parent_id' => $property->id,
-                'type' => Image::PROPERTY
+                'type' => Image::PROPERTY,
             ]);
+            Image::where('file', $thumb)->update(['is_thumbnail' => 1]);
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -204,6 +209,15 @@ class PropertyController extends Controller
         })->toArray();
         $data['tags'] = implode(",", $tags);
         
+        $thumb = "";
+        if (empty($single->images)) {
+            \Session::put('dz-sess', str_random(32));
+            $data['dzSess'] = \Session::get('dz-sess');
+        } else {
+            $thumb = $single->images->where('is_thumbnail', 1)->first()->file;
+        }
+        $data['thumb'] = $thumb;
+        
         return view('admin.property.edit', $data);
     }
 
@@ -220,6 +234,7 @@ class PropertyController extends Controller
             $title = $request->title;
             $categoryId = $request->type;
             $tags = explode(",", trim($request->tags));
+            $thumb = $request->thumbnail;
             $price = $request->price;
             $squareMeter = $request->square_meter;
             $desc = $request->desc;
@@ -273,6 +288,14 @@ class PropertyController extends Controller
                 $facModel->value = $fac;
                 $facModel->save();
             }
+
+            if (!empty(\Session::get('dz-sess'))) {
+                Image::where('sid', \Session::get('dz-sess'))->update([
+                    'parent_id' => $property->id,
+                    'type' => Image::PROPERTY
+                ]);
+                Image::where('file', $thumb)->update(['is_thumbnail' => 1]);
+            }
         } catch (\Exception $e) {
             dd($e->getMessage());
             return redirect()->route('admin.property.index')->with('error', 'Property gagal diubah !');
@@ -291,8 +314,18 @@ class PropertyController extends Controller
     public function destroy($id)
     {
         try {
+            $imgs = Image::where('parent_id', $id);
+            if ($imgs->count() >= 1) {
+                $imgs = $imgs->pluck('file')->map(function($d){
+                    $d = "upload/".$d;
+                    return $d;
+                })->toArray();
+                $x = Storage::disk('public')->delete($imgs);
+            }
+
             Property::destroy($id);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->route('admin.property.index')->with('error', 'Property gagal dihapus !');
         }
 

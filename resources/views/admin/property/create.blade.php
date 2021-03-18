@@ -32,7 +32,7 @@
                                     <div class="col-sm-10">
                                         <div class="form-group label-floating is-empty">
                                             <label class="control-label"></label>
-                                            <input type="text" value="Amsterdam,Washington,Sydney,Beijing" class="tagsinput" data-role="tagsinput" data-color="rose" name="tags"/>
+                                            <input type="text" value="" class="tagsinput" data-role="tagsinput" data-color="rose" name="tags"/>
                                         </div>
                                     </div>
                                 </div>
@@ -138,6 +138,19 @@
                                     'acceptedFiles' => '.jpg,.png',
                                 ])
                                 @endcomponent
+
+                                <div class="row">
+                                    <label class="col-sm-2 label-on-left">Thumbnail</label>
+                                    <div class="col-sm-5">
+                                        <div class="form-group label-floating is-empty">
+                                            <label class="control-label"></label>
+                                            <select class="selectpicker" data-style="btn btn-primary btn-round"
+                                            title="Pilih thumbnail" data-size="7" name="thumbnail" id="sel_thumb">
+                                            </select>
+                                        </div>
+                                        <img id="img_thumb" src="http://www.qbcsolutions.eu/wp-content/uploads/2013/11/default_image_01.png" style="height:auto;width:200px;">
+                                    </div>
+                                </div>
 
                                 <hr>
                                 <div class="row">
@@ -252,6 +265,11 @@
             
                 }
             });
+        });
+
+        $("#sel_thumb").change(function(e){
+            let val = $(this).val();
+            $(img_thumb).attr('src', '/storage/upload/'+val);
         });
     </script>
 @endsection

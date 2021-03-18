@@ -39,6 +39,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('/edit/{id}', [PropertyController::class, 'edit'])->name('admin.property.edit');
             Route::post('/store', [PropertyController::class, 'store'])->name('admin.property.store');
             Route::post('/update/{id}', [PropertyController::class, 'update'])->name('admin.property.update');
+            Route::get('/destroy/{id}', [PropertyController::class, 'destroy'])->name('admin.property.destroy');
 
             // datatable
             Route::get('/dt-property', [PropertyController::class, 'datatable'])->name('admin.dt.property');

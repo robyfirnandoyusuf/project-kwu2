@@ -155,14 +155,31 @@
                                 @component('partials.uploader', [
                                     'title' => 'Drop Images',
                                     'desc' => '.jpg,.png only',
+                                    'thumb' => $thumb,
                                     'params' => [
                                         'parent_id' => $single->id,
-                                        'sid' => !empty($img = $single->images->first()) ? $img->sid : ""
+                                        'sid' => !empty($img = $single->images->first()) ? $img->sid : $dzSess
                                     ],
                                     'acceptedFiles' => '.jpg,.png',
                                     'uploadedFiles' => $single->images->toArray()
                                 ])
                                 @endcomponent
+
+                                <div class="row">
+                                    <label class="col-sm-2 label-on-left">Thumbnail</label>
+                                    <div class="col-sm-5">
+                                        <div class="form-group label-floating is-empty">
+                                            <label class="control-label"></label>
+                                            <select class="selectpicker" data-style="btn btn-primary btn-round"
+                                            title="Pilih thumbnail" data-size="7" name="thumbnail" id="sel_thumb">
+                                                {{-- @foreach ($single->images as $img)
+                                                    <option value="{{ $img->file }}">{{ $img->file }}</option>
+                                                @endforeach --}}
+                                            </select>
+                                        </div>
+                                        <img id="img_thumb" src="http://www.qbcsolutions.eu/wp-content/uploads/2013/11/default_image_01.png" style="height:auto;width:200px;">
+                                    </div>
+                                </div>
 
                                 <hr>
                                 <div class="row">
@@ -280,6 +297,11 @@
             
                 }
             });
+        });
+
+        $("#sel_thumb").change(function(e){
+            let val = $(this).val();
+            $(img_thumb).attr('src', '/storage/upload/'+val);
         });
     </script>
 @endsection

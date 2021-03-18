@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 use App\Traits\AjaxTrait;
 
 class MediaController extends Controller
@@ -116,6 +118,7 @@ class MediaController extends Controller
     {
         try {
             $data = Image::where('file', $file)->delete();
+            Storage::disk('public')->delete('upload/'.$file);
         } catch (\Exception $e) {
             $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
         }

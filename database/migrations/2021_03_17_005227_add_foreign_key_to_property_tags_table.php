@@ -14,8 +14,8 @@ class AddForeignKeyToPropertyTagsTable extends Migration
     public function up()
     {
         Schema::table('property_tags', function (Blueprint $table) {
-            $table->foreign('tag_id')->references('id')->on('tags');
-            $table->foreign('property_id')->references('id')->on('properties');
+            $table->foreign('tag_id')->references('id')->on('tags')->cascadeOnDelete();
+            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
         });
     }
 
