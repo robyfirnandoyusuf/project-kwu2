@@ -5,11 +5,17 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Carbon;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    protected $appends = ['created_date'];
+
+    const ROLE_ADMIN = 'admin';
+    const ROLE_AGENT = 'agent';
+    const ROLE_USER = 'user';
 
     /**
      * The attributes that are mass assignable.
@@ -40,4 +46,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getCreatedDateAttribute()
+    {
+        return (new Carbon($this->attributes['created_at']))->format('d/m/Y');
+    }
 }

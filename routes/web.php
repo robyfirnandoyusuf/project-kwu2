@@ -8,7 +8,8 @@ use App\Http\Controllers\{
 use App\Http\Controllers\Admin\{
     LoginController,
     AdminController,
-    PropertyController
+    PropertyController,
+    UserController
 };
 use App\Http\Controllers\Frontend\{
     HomeController
@@ -43,6 +44,18 @@ Route::group(['prefix' => 'admin'], function () {
 
             // datatable
             Route::get('/dt-property', [PropertyController::class, 'datatable'])->name('admin.dt.property');
+        });
+
+        Route::group(['prefix' => 'user'], function () {
+            Route::get('/index', [UserController::class, 'index'])->name('admin.user.index');
+            Route::get('/create', [UserController::class, 'create'])->name('admin.user.create');
+            Route::get('/edit/{user}', [UserController::class, 'edit'])->name('admin.user.edit');
+            Route::post('/store', [UserController::class, 'store'])->name('admin.user.store');
+            Route::post('/update/{user}', [UserController::class, 'update'])->name('admin.user.update');
+            Route::get('/destroy/{user}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+
+            // datatable
+            Route::get('/dt-user', [UserController::class, 'datatable'])->name('admin.dt.user');
         });
     });
 

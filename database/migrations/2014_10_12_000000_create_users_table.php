@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('phone')->nullable();
             $table->enum('role', ['admin', 'agent', 'user']);
             $table->enum('type', ['premium', 'free']);
+            $table->text('address');
             $table->rememberToken();
             $table->timestamps();
         });
