@@ -10,7 +10,7 @@
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-PDTWJ3Z');</script>
     <!-- End Google Tag Manager -->
-    <title>XERO - Real Estate HTML Template</title>
+    <title>{{ env('APP_NAME') ?? ""}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <!-- External CSS libraries -->

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Property;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class PropertyController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +14,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $recent = Property::with('facs')->orderBy('id', 'desc')->take(4)->get();
-        $data['recent'] = $recent;
-        return view('frontend.home', $data);
+        //
     }
 
     /**

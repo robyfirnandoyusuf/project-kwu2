@@ -12,7 +12,8 @@ use App\Http\Controllers\Admin\{
     UserController
 };
 use App\Http\Controllers\Frontend\{
-    HomeController
+    HomeController,
+    PropertyController as FrontendPropertyController
 };
 
 /*
@@ -61,6 +62,10 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::post('/upload-media', [MediaController::class, 'store'])->name('admin.media.store');
     Route::delete('/destroy-media/{uid}', [MediaController::class, 'destroy'])->name('admin.media.destroy');
+});
+
+Route::group(['prefix' => 'property'], function () {
+    Route::get('show/{property}', [FrontendPropertyController::class, 'show'])->name('frontend.property.show');
 });
 
 Route::get('/', [HomeController::class, 'index']);
