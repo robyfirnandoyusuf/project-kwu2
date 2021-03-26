@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Property;
 
 class PropertyController extends Controller
 {
@@ -44,9 +45,10 @@ class PropertyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Property $property)
     {
-        //
+        $data['single'] = $property->with('city.province', 'category', 'facs', 'images')->first();
+        return view('frontend.property-detail', $data);
     }
 
     /**

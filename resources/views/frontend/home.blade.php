@@ -1,4 +1,37 @@
 @extends('frontend.layouts.app')
+
+@section('slider')
+    <!-- Banner start -->
+    <div class="banner banner_video_bg" id="banner">
+        <div class="pattern-overlay">
+            <a id="bgndVideo" class="player" data-property="{videoURL:'https://www.youtube.com/watch?v=5e0LxrLSzok',containment:'.banner_video_bg', quality:'large', autoPlay:true, mute:true, opacity:1}">bg</a>
+        </div>
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="carousel-caption banner-slider-inner d-flex h-100 text-center">
+                        <div class="carousel-content container b1-inner">
+                            <div class="text-center">
+                                <div id="typed-strings">
+                                    <p>Buy, Sell or Rent</p>
+                                </div>
+                                <h1 class="typed-text">&nbsp;
+                                    <span id="typed"></span>
+                                </h1>
+                                <p class="text-p" data-animation="animated fadeInUp delay-10s">
+                                    This is real estate website template based on Bootstrap 4 framework.
+                                </p>
+                                <a data-animation="animated fadeInUp delay-10s" href="#" class="btn btn-white">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner end -->
+@endsection
+
 @section('content')
     <!-- Featured properties start -->
     <div class="featured-properties content-area-2 bg-white">
@@ -202,11 +235,8 @@
                                     </div>
                                 </a>
                                 <div class="property-overlay">
-                                    <a href="properties-details.html" class="overlay-link">
+                                    <a href="{{ route('frontend.property.show', $recent->id) }}" class="overlay-link">
                                         <i class="fa fa-link"></i>
-                                    </a>
-                                    <a class="overlay-link property-video" title="Test Title">
-                                        <i class="fa fa-video-camera"></i>
                                     </a>
                                     <div class="property-magnify-gallery">
                                         <a href="/frontend-assets/img/property/img-7.jpg" class="overlay-link">
