@@ -8,7 +8,6 @@ use App\Http\Controllers\{
 use App\Http\Controllers\Admin\{
     LoginController,
     AdminController,
-    PropertyController,
     UserController
 };
 use App\Http\Controllers\Frontend\{
@@ -34,18 +33,6 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::group(['middleware' => 'isadmin'], function () {
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
-        Route::group(['prefix' => 'property'], function () {
-            Route::get('/index', [PropertyController::class, 'index'])->name('admin.property.index');
-            Route::get('/create', [PropertyController::class, 'create'])->name('admin.property.create');
-            Route::get('/edit/{id}', [PropertyController::class, 'edit'])->name('admin.property.edit');
-            Route::post('/store', [PropertyController::class, 'store'])->name('admin.property.store');
-            Route::post('/update/{id}', [PropertyController::class, 'update'])->name('admin.property.update');
-            Route::get('/destroy/{id}', [PropertyController::class, 'destroy'])->name('admin.property.destroy');
-
-            // datatable
-            Route::get('/dt-property', [PropertyController::class, 'datatable'])->name('admin.dt.property');
-        });
 
         Route::group(['prefix' => 'user'], function () {
             Route::get('/index', [UserController::class, 'index'])->name('admin.user.index');
