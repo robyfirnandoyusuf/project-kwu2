@@ -19,6 +19,7 @@ class CreatePropertiesTable extends Migration
             $table->string('name');
             $table->string('desc');
             $table->bigInteger('district_id')->unsigned();
+            $table->string('postal_code');
             $table->string('address');
             $table->string('lat_long');
             $table->text('facs');
