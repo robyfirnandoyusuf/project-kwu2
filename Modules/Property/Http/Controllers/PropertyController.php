@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use Illuminate\Support\Facades\Storage;
-
+use Session;
 use App\Models\Category;
 use App\Models\Facility;
 use App\Models\Image;
@@ -28,7 +28,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        \Session::forget('dz-sess');
+        Session::forget('dz-sess');
         $data['title'] = 'Listing Property';
         return view('property::admin.property.index', $data);
     }
