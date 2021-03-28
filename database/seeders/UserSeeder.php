@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'password' => \Hash::make('admin'),
             'role' => 'admin',
             'type' => 'premium',
+            'address' => 'tester'
         ];
 
         User::insert($data);
