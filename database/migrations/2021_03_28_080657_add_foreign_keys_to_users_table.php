@@ -14,8 +14,8 @@ class AddForeignKeysToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreign('role', 'users_ibfk_1')->references('reff')->on('ref_role')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign('active_status', 'users_ibfk_2')->references('reff')->on('ref_status')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign('role', 'users_ibfk_1')->references('ref')->on('ref_roles')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign('active_status', 'users_ibfk_2')->references('ref')->on('ref_status')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 

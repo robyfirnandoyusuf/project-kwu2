@@ -16,7 +16,7 @@ class AddForeignKeysToRentsTable extends Migration
         Schema::table('rents', function (Blueprint $table) {
             $table->foreign('property_id', 'rents_ibfk_1')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
             $table->foreign('user_id', 'rents_ibfk_2')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign('active_status', 'rents_ibfk_3')->references('reff')->on('ref_status')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign('active_status', 'rents_ibfk_3')->references('ref')->on('ref_status')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 

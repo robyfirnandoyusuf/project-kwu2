@@ -37,7 +37,7 @@
                         <a href="{{ route('admin.user.index', ['type' => 'admin']) }}">Admin</a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.user.index', ['type' => 'agent']) }}">Agent</a>
+                        <a href="{{ route('admin.user.index', ['type' => 'mitra']) }}">Mitra</a>
                     </li>
                     <li>
                         <a href="{{ route('admin.user.index', ['type' => 'user']) }}">Common User</a>

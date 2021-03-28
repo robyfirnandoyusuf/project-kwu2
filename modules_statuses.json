@@ -1,5 +1,10 @@
 {
     "Property": true,
     "Payment": true,
-    "Rent": true
+    "Rent": true,
+    "User": true,
+    "Kontol": true,
+    "Role": true,
+    "Status": true,
+    "Auth": true
 }

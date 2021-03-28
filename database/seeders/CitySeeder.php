@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\City;
+use App\Models\RefCity;
 use Illuminate\Database\Seeder;
 
 class CitySeeder extends Seeder
@@ -3615,6 +3615,6 @@ class CitySeeder extends Seeder
             }
          ]';
         $data = json_decode($json, true);
-        City::insert($data);
+        RefCity::insert($data);
     }
 }
