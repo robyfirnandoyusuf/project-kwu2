@@ -10,6 +10,7 @@ class Image extends Model
     protected $guarded = [];
     const SLIDER = 'slider';
     const PROPERTY = 'property';
+    const AVATAR = 'avatar';
 
     use HasFactory;
 }

@@ -15,8 +15,9 @@ class CreateRefStatusTable extends Migration
     {
         Schema::create('ref_status', function (Blueprint $table) {
             $table->id();
-            $table->integer('reff')->unique()->index();
+            $table->integer('ref')->unique()->index();
             $table->string('title');
+            $table->timestamps();
         });
     }
 

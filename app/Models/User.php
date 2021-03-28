@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
+    protected $with = ['ref_status', 'image', 'ref_role'];
     protected $appends = ['created_date'];
 
     const ROLE_ADMIN = 'admin';
@@ -50,5 +52,34 @@ class User extends Authenticatable
     public function getCreatedDateAttribute()
     {
         return (new Carbon($this->attributes['created_at']))->format('d/m/Y');
+    }
+
+    public function ref_status()
+    {
+        return $this->hasOne(RefStatus::class, 'ref', 'active_status');
+    }
+
+    public function ref_role()
+    {
+        return $this->hasOne(RefRole::class, 'ref', 'role');
+    }
+
+    public function image()
+    {
+        return $this->hasOne(Image::class, 'id', 'image_id');
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+        ];
     }
 }

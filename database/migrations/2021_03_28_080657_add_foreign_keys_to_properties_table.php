@@ -15,9 +15,9 @@ class AddForeignKeysToPropertiesTable extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->foreign('user_id', 'properties_ibfk_1')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign('active_status', 'properties_ibfk_3')->references('reff')->on('ref_status')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign('type', 'properties_ibfk_4')->references('reff')->on('ref_type')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign('district_id', 'properties_ibfk_5')->references('id')->on('reff_districts')->onUpdate('RESTRICT')->onDelete('RESTRICT');
+            $table->foreign('active_status', 'properties_ibfk_3')->references('ref')->on('ref_status')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign('type', 'properties_ibfk_4')->references('ref')->on('ref_types')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign('district_id', 'properties_ibfk_5')->references('id')->on('ref_districts')->onUpdate('RESTRICT')->onDelete('RESTRICT');
         });
     }
 

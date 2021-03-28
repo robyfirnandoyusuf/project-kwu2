@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\RefRole;
+use App\Models\RefStatus;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,12 +18,14 @@ class UserSeeder extends Seeder
     {
         $data = [
             'name' => 'Admin Gans',
-            'username' => 'admin',
             'email' => 'admin@test.dev',
+            'gender' => 1,
+            'address' => 'tester',
             'password' => \Hash::make('admin'),
-            'role' => 'admin',
-            'type' => 'premium',
-            'address' => 'tester'
+            'phone' => '0811321313',
+            'role' => RefRole::where('ref', 1)->first()->id,
+            'identity' => '',
+            'active_status' => RefStatus::where('ref', 1)->first()->id
         ];
 
         User::insert($data);

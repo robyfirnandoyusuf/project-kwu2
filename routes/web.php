@@ -7,8 +7,7 @@ use App\Http\Controllers\{
 };
 use App\Http\Controllers\Admin\{
     LoginController,
-    AdminController,
-    UserController
+    AdminController
 };
 use App\Http\Controllers\Frontend\{
     HomeController,
@@ -30,8 +29,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/auth', [LoginController::class, 'index'])->name('admin.auth.get');
     Route::post('/auth/post', [LoginController::class, 'show'])->name('admin.auth.post');
     Route::get('/auth/logout', [LoginController::class, 'destroy'])->name('admin.auth.logout');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware('isadmin')->name('admin.dashboard');
 
-    Route::group(['middleware' => 'isadmin'], function () {
+    /* Route::group(['middleware' => 'isadmin'], function () {
         Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
         Route::group(['prefix' => 'user'], function () {
@@ -45,7 +45,7 @@ Route::group(['prefix' => 'admin'], function () {
             // datatable
             Route::get('/dt-user', [UserController::class, 'datatable'])->name('admin.dt.user');
         });
-    });
+    }); */
 
     Route::post('/upload-media', [MediaController::class, 'store'])->name('admin.media.store');
     Route::delete('/destroy-media/{uid}', [MediaController::class, 'destroy'])->name('admin.media.destroy');
