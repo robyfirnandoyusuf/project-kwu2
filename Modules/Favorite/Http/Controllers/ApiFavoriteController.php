@@ -1,25 +1,32 @@
 <?php
 
-namespace Modules\Auth\Http\Controllers;
+namespace Modules\Favorite\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Favorite;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ApiAuthController extends Controller
+class ApiFavoriteController extends Controller
 {
     use APITrait;
-    
+    private $limit = 10;
+
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+        $user = JWTAuth::toUser();
+        $favorite = Favorite::with(['property', 'user'])->where('user_id', $user->id)->paginate($this->limit);
+        $this->status = true;
+        $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $this->data = $favorite;
+
+        return $this->json();
     }
 
     /**
@@ -28,7 +35,7 @@ class ApiAuthController extends Controller
      */
     public function create()
     {
-        return view('auth::create');
+        // return view('favorite::create');
     }
 
     /**
@@ -39,6 +46,23 @@ class ApiAuthController extends Controller
     public function store(Request $request)
     {
         //
+        $user = JWTAuth::toUser();
+        $propId = $request->property_id;
+        
+        try {
+            $favorite = new Favorite;
+            $favorite->property_id = $propId;
+            $favorite->user_id = $user->id;
+            $favorite->save();
+
+            $this->status = true;
+            $this->code = \Illuminate\Http\Response::HTTP_OK;
+        } catch (\Exception $e) {
+            $this->status = false;
+            $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        return $this->json();
     }
 
     /**
@@ -46,28 +70,9 @@ class ApiAuthController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function show(Request $request)
+    public function show($id)
     {
-        $email = $request->email;
-        $password = $request->password;
-        $user = User::where(['email' => $email]);
-
-        if ($user->count() >= 1) {
-            if (\Hash::check($password, $user->first()->password)) {
-                $token = JWTAuth::fromUser($user->first());
-                $this->success = true;
-                $this->code = \Illuminate\Http\Response::HTTP_OK;
-                $this->data = $token;
-            } else {
-                $this->success = false;
-                $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
-            }
-        } else {
-            $this->success = false;
-            $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
-        }
-
-        return $this->json();
+        return view('favorite::show');
     }
 
     /**
@@ -77,7 +82,7 @@ class ApiAuthController extends Controller
      */
     public function edit($id)
     {
-        return view('auth::edit');
+        return view('favorite::edit');
     }
 
     /**

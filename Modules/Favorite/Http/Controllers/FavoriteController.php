@@ -1,25 +1,20 @@
 <?php
 
-namespace Modules\Auth\Http\Controllers;
+namespace Modules\Favorite\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use App\Traits\APITrait;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ApiAuthController extends Controller
+class FavoriteController extends Controller
 {
-    use APITrait;
-    
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
     public function index()
     {
-        
+        return view('favorite::index');
     }
 
     /**
@@ -28,7 +23,7 @@ class ApiAuthController extends Controller
      */
     public function create()
     {
-        return view('auth::create');
+        return view('favorite::create');
     }
 
     /**
@@ -46,28 +41,9 @@ class ApiAuthController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function show(Request $request)
+    public function show($id)
     {
-        $email = $request->email;
-        $password = $request->password;
-        $user = User::where(['email' => $email]);
-
-        if ($user->count() >= 1) {
-            if (\Hash::check($password, $user->first()->password)) {
-                $token = JWTAuth::fromUser($user->first());
-                $this->success = true;
-                $this->code = \Illuminate\Http\Response::HTTP_OK;
-                $this->data = $token;
-            } else {
-                $this->success = false;
-                $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
-            }
-        } else {
-            $this->success = false;
-            $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
-        }
-
-        return $this->json();
+        return view('favorite::show');
     }
 
     /**
@@ -77,7 +53,7 @@ class ApiAuthController extends Controller
      */
     public function edit($id)
     {
-        return view('auth::edit');
+        return view('favorite::edit');
     }
 
     /**
