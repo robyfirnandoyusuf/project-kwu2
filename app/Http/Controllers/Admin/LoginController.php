@@ -54,21 +54,14 @@ class LoginController extends Controller
      */
     public function show(Request $request)
     {
-        $email = $request->email;
-        $password = $request->password;
-        $user = User::where(['email' => $email]);
 
-        if ($user->count() >= 1) {
-            if (\Hash::check($password, $user->first()->password)) {
-                Auth::loginUsingId($user->first()->id);
-                return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('admin.auth.get')->with('error_msg', 'Kredensial salah !');
-            }
-            // dd(Auth::user());
-        } else {
-            return redirect()->route('admin.auth.get')->with('error_msg', 'Kredensial salah !');
+        $credentials = $request->only('email', 'password');
+
+        if(Auth::attempt($credentials)) {
+            return redirect()->route('admin.dashboard');
         }
+
+        return redirect()->route('admin.auth.get')->with('error_msg', 'Kredensial salah !');
     }
 
     /**
