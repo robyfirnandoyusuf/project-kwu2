@@ -2,7 +2,7 @@
 
 namespace Modules\Auth\Http\Controllers;
 
-use App\Models\User;
+use Auth;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -48,25 +48,35 @@ class ApiAuthController extends Controller
      */
     public function show(Request $request)
     {
-        $email = $request->email;
-        $password = $request->password;
-        $user = User::where(['email' => $email]);
+        $credentials = $request->only('email', 'password');
 
-        if ($user->count() >= 1) {
-            if (\Hash::check($password, $user->first()->password)) {
-                $token = JWTAuth::fromUser($user->first());
-                $this->success = true;
-                $this->code = \Illuminate\Http\Response::HTTP_OK;
-                $this->data = ['token' => $token];
-            } else {
+        try {
+            if(!$token = JWTAuth::attempt($credentials)) {
                 $this->success = false;
                 $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
+                $this->message = "Invalid Credential";
+
+                goto returnStatement;
             }
-        } else {
+        } catch (JWTException $e) {
             $this->success = false;
             $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
+            
+            goto returnStatement;
         }
 
+        if (Auth::user()->active_status != 1) {
+            $this->success = false;
+            $this->code = \Illuminate\Http\Response::HTTP_UNAUTHORIZED;
+            $this->message = "Inactive Account";
+            goto returnStatement;
+        }
+
+        $this->success = true;
+        $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $this->data = ['token' => $token];
+
+        returnStatement:
         return $this->json();
     }
 
