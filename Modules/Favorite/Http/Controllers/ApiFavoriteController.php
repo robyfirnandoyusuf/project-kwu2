@@ -20,7 +20,7 @@ class ApiFavoriteController extends Controller
      */
     public function index(Request $request)
     {
-        $user = JWTAuth::toUser();
+        $user = JWTAuth::user();
         $favorite = Favorite::with(['property', 'user'])->where('user_id', $user->id)->paginate($this->limit);
         $this->status = true;
         $this->code = \Illuminate\Http\Response::HTTP_OK;
