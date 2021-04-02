@@ -7,5 +7,6 @@
     "Role": true,
     "Status": true,
     "Auth": true,
-    "Media": true
+    "Media": true,
+    "Favorite": true
 }
