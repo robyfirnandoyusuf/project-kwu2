@@ -4,7 +4,8 @@ namespace Modules\Media\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
 use App\Traits\APITrait;
 
@@ -22,9 +23,10 @@ class APIMediaController extends Controller
     public function index()
     {
         $media = Media::where('user_id', Auth::user()->id)->paginate(10);
+        MediaResource::collection($media);
 
-        $this->status = true;
-        $this->data = new MediaResource($media);
+        $this->success = true;
+        $this->data = MediaResource::collection($media);
         $this->status = Response::HTTP_OK;
 
         return $this->json();
@@ -38,20 +40,20 @@ class APIMediaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|max:5000|mimes:' . $this->getAllowedFileTypes(),
+            'image' => 'required|file|max:5000|mimes:' . $this->getAllowedFileTypes(),
         ]);
         //
         $user = Auth::user();
-
+        $mediaName = $this->uploadImage($request->file('image'));
         try {
-            $mediaName = $this->uploadImage($request->file('image'));
+            
             if ($mediaName != "") {
                 $media = new Media;
                 $media->user_id   = $user->id;
                 $media->file      = $mediaName;
                 $media->save();
 
-                $this->status = true;
+                $this->success = true;
                 $this->data = new MediaResource($media);
                 $this->code = Response::HTTP_CREATED;
 
@@ -59,8 +61,8 @@ class APIMediaController extends Controller
             }
 
         } catch (\Exception $e) {
-            $this->status = false;
-            $this->message = $e->getMessage();
+            $this->success = false;
+            $this->message = "Error when uploading image";
             $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 

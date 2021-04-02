@@ -13,11 +13,16 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['prefix'=>'v1', 'middleware' => 'api'], function () {
+Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
     Route::group(['prefix' => 'media'], function () {
         Route::get('/', [
             'uses' => 'APIMediaController@index',
-            'as' => 'api.media.get'
+            'as' => 'api.media.index'
+        ]);
+
+        Route::post('/store', [
+            'uses' => 'APIMediaController@store',
+            'as' => 'api.media.store'
         ]);
     });
 });

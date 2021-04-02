@@ -3,6 +3,7 @@
 namespace Modules\Media\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use URL;
 
 class MediaResource extends JsonResource
 {
@@ -14,6 +15,9 @@ class MediaResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'image' => URL::to('/storage/'.$this->file),
+        ];
     }
 }
