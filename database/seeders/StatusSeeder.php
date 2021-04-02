@@ -65,7 +65,7 @@ class StatusSeeder extends Seeder
             ],
             [
                 'ref' => 12,
-                'title' => 'accepted'
+                'title' => 'accept'
             ],
         ];
 

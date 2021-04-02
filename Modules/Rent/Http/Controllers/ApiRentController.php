@@ -80,14 +80,39 @@ class ApiRentController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update accept / deny for mitra
      * @param Request $request
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $userId = $request->user_id;
+        $propertyId = $request->property_id;
+        $status = $request->status; // accepted / deny
+        $ref = "";
+        switch ($status) {
+            case 'accept':
+                $ref = RefStatus::status(RefStatus::ACCEPT)->ref;
+                break;
+            default:
+                $ref = RefStatus::status(RefStatus::PENDING)->ref;
+                break;
+        }
+
+        try {
+            Rent::where(['user_id' => $userId, 'property_id', $propertyId])->update([
+                'active_status' => $ref
+            ]);
+        } catch (\Exception $e) {
+            $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->success = false;
+            $this->data = $e->getMessage();
+        }
+
+        $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $this->success = true;
+        return $this->json();
     }
 
     /**

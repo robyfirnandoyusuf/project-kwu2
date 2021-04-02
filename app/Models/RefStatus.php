@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class RefStatus extends Model
 {
     const PENDING = 'pending';
+    const ACCEPT = 'accept';
+
     use HasFactory;
     protected $table = 'ref_status';
 
