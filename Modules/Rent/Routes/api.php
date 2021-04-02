@@ -17,15 +17,15 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
     Route::group(['prefix' => 'rent'], function () {
         Route::post('get', [
             'uses' => 'ApiRentController@index',
-            'as' => 'api.rent.get'
+            'as' => 'api.rent.get-rent'
         ]);
         Route::post('store', [
             'uses' => 'ApiRentController@store',
-            'as' => 'api.rent.post'
+            'as' => 'api.rent.post-rent'
         ]);
         Route::post('update', [
             'uses' => 'ApiRentController@update',
-            'as' => 'api.rent.update'
+            'as' => 'api.rent.update-rent'
         ]);
     });
 });
