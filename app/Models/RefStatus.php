@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RefStatus extends Model
 {
+    const PENDING = 'pending';
     use HasFactory;
     protected $table = 'ref_status';
 
