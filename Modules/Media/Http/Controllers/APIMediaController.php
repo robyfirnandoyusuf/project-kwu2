@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 use App\Traits\APITrait;
 
@@ -39,9 +40,23 @@ class APIMediaController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        
+        $validatorRule = [
             'image' => 'required|file|max:5000|mimes:' . $this->getAllowedFileTypes(),
-        ]);
+        ];
+
+        $validatorMessage = [];
+
+        $validator = Validator::make($request->all(), $validatorRule, $validatorMessage);
+        $errorString = implode(", ",$validator->messages()->all());
+
+        if ($validator->fails()) {
+            $this->success = false;
+            $this->data = $validator->errors();
+            $this->code = Response::HTTP_BAD_REQUEST;
+            $this->message = $errorString;
+            goto returnStatement;
+        }
         //
         $user = Auth::user();
         $mediaName = $this->uploadImage($request->file('image'));
