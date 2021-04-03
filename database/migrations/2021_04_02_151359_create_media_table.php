@@ -17,7 +17,7 @@ class CreateMediaTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('file');
-            $table->boolean('is_used')->default(false);
+            $table->string('type');
             $table->timestamps();
         });
     }
