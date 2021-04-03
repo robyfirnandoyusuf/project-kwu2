@@ -18,6 +18,7 @@ class MediaResource extends JsonResource
         return [
             'id' => $this->id,
             'image' => URL::to('/storage/'.$this->file),
+            'type' => $this->type,
         ];
     }
 }

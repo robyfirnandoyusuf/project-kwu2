@@ -21,14 +21,38 @@ class APIMediaController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $media = Media::where('user_id', Auth::user()->id)->paginate(10);
+        $validatorRule = [
+            'type' => 'in:'. Media::SLIDER.",".Media::PROPERTY.",".Media::AVATAR,
+        ];
+
+        $validatorMessage = [];
+
+        $validator = Validator::make($request->all(), $validatorRule, $validatorMessage);
+        $errorString = implode(", ",$validator->messages()->all());
+
+        if ($validator->fails()) {
+            $this->success = false;
+            $this->data = $validator->errors();
+            $this->code = Response::HTTP_BAD_REQUEST;
+            $this->message = $errorString;
+            goto returnStatement;
+        }
+
+        $media = Media::where('user_id', Auth::user()->id);
+
+        if($request->type != "" ) {
+            $media = $media->where("type", $request->type);
+        }
+
+        $media = $media->paginate(10);
 
         $this->success = true;
         $this->data = MediaResource::collection($media)->response()->getData(true);
         $this->status = Response::HTTP_OK;
-
+    
+    returnStatement:
         return $this->json();
     }
 
@@ -42,6 +66,7 @@ class APIMediaController extends Controller
         
         $validatorRule = [
             'image' => 'required|file|max:5000|mimes:' . $this->getAllowedFileTypes(),
+            'type' => 'required|in:'. Media::SLIDER.",".Media::PROPERTY.",".Media::AVATAR,
         ];
 
         $validatorMessage = [];
@@ -65,6 +90,7 @@ class APIMediaController extends Controller
                 $media = new Media;
                 $media->user_id   = $user->id;
                 $media->file      = $mediaName;
+                $media->type      = $request->type;
                 $media->save();
 
                 $this->success = true;

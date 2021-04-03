@@ -10,6 +10,6 @@ class Media extends Model
     const SLIDER = 'slider';
     const PROPERTY = 'property';
     const AVATAR = 'avatar';
-    
+
     use HasFactory;
 }
