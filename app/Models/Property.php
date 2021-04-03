@@ -22,6 +22,6 @@ class Property extends Model
 
     public function gallery()
     {
-        return $this->hasMany(PropertyImage::class, 'property_id', 'id');
+        return $this->hasMany(PropertyImage::class, 'property_id', 'id')->orderBy('sequence');
     }
 }
