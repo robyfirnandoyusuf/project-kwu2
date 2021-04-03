@@ -20,7 +20,7 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'as' => 'api.media.index'
         ]);
 
-        Route::post('/store', [
+        Route::post('/', [
             'uses' => 'APIMediaController@store',
             'as' => 'api.media.store'
         ]);
