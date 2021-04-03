@@ -5,7 +5,7 @@ namespace Modules\Property\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 
 use App\Traits\APITrait;
 use Auth;
@@ -38,7 +38,13 @@ class APIPropertyController extends Controller
      */
     public function store(Request $request)
     {
-        // validation
+        // validate media
+        if ($this->checkMediaIDIsUsed($request->property_image_ids)) {
+            $this->success = false;
+            $this->message = "Invalid Image uploads";
+            $this->code = Response::HTTP_BAD_REQUEST;
+            return $this->json();
+        }
 
         $user = Auth::user();
 
