@@ -14,25 +14,25 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
-    Route::group(['prefix' => 'property'], function () {
+    Route::group(['prefix' => 'mitra/property'], function () {
         Route::get('/', [
             'uses' => 'APIPropertyController@index',
-            'as' => 'api.property.index'
+            'as' => 'api.mitra.property.index'
         ]);
 
         Route::post('/', [
             'uses' => 'APIPropertyController@store',
-            'as' => 'api.property.store'
+            'as' => 'api.mitra.property.store'
         ]);
 
         Route::get('/{property}', [
             'uses' => 'APIPropertyController@show',
-            'as' => 'api.property.show'
+            'as' => 'api.mitra.property.show'
         ]);
 
         Route::put('/{property}', [
             'uses' => 'APIPropertyController@update',
-            'as' => 'api.property.update'
+            'as' => 'api.mitra.property.update'
         ]);
     });
 });
