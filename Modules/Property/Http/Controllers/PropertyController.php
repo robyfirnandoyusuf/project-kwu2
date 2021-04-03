@@ -8,17 +8,10 @@ use Auth;
 use DB;
 use Illuminate\Support\Facades\Storage;
 use Session;
-use App\Models\Category;
-use App\Models\Facility;
-use App\Models\Image;
+// use App\Models\Image;
 use App\Models\Property;
-use App\Models\Province;
-use App\Models\City;
-use App\Models\PropertyTag;
-use App\Models\Tag;
-use Illuminate\Support\Facades\Http;
-use Psy\CodeCleaner\FunctionReturnInWriteContextPass;
-
+use App\Models\RefProvince;
+use App\Models\RefCity;
 class PropertyController extends Controller
 {
     /**
@@ -35,7 +28,7 @@ class PropertyController extends Controller
 
     public function datatable()
     {
-        $model = Property::with(['user', 'thumbnail', 'category'])
+        $model = Property::with(['user', 'thumbnail'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
@@ -59,6 +52,15 @@ class PropertyController extends Controller
             })
             ->editColumn('price', function ($data) {
                 return "Rp." . number_format($data->price);
+            })
+            ->editColumn('status', function ($data) {
+                $btn = '<button class="btn btn-warning btn-sm">Non Aktif</button>';
+
+                if ($data->active_status == 1) {
+                    $btn = '<button class="btn btn-success btn-sm">Aktif</button>';
+                }
+
+                return $btn;
             })
             ->editColumn('date', function ($data) {
                 return $data->new_date;
@@ -89,8 +91,7 @@ class PropertyController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Property';
-        $data['cats'] = Category::all();
-        $data['provs'] = Province::all();
+        $data['provs'] = RefProvince::all();
         if (empty(\Session::get('dz-sess')))
             \Session::put('dz-sess', str_random(32));
 
@@ -203,7 +204,7 @@ class PropertyController extends Controller
         $data['provs'] = Province::all();
         $single = Property::with(['category', 'facs', 'city', 'images', 'property_tags.tag'])->whereId($id)->first();
         $data['single'] = $single;
-        $data['cities'] = City::where('province_id', $single->city->province_id)->get();
+        $data['cities'] = RefCity::where('province_id', $single->city->province_id)->get();
         $tags = $single->property_tags->map(function($d) {
             return $d->tag->tag;
         })->toArray();

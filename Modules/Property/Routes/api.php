@@ -13,6 +13,16 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/property', function (Request $request) {
-    return $request->user();
+Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
+    Route::group(['prefix' => 'property'], function () {
+        Route::get('/', [
+            'uses' => 'APIPropertyController@index',
+            'as' => 'api.property.index'
+        ]);
+
+        Route::post('/', [
+            'uses' => 'APIPropertyController@store',
+            'as' => 'api.property.store'
+        ]);
+    });
 });

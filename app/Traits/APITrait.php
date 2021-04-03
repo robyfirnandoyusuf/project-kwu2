@@ -19,7 +19,7 @@ trait APITrait
         $result['success'] = $this->success;
         $result['data'] = $this->data;
         $result['code'] = $this->code;
-        $result['message'] = $this->code;
+        $result['message'] = $this->message;
 
         return response()->json($result, $this->code, [], JSON_PRETTY_PRINT);
     }

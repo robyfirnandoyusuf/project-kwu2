@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('title')
+    {{ $title }}
+@endsection
 
 @section('content')
 <div class="content">
@@ -6,11 +9,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <a href="{{ route('admin.property.create') }}">
+                    {{-- <a href="{{ route('admin.property.create') }}">
                         <div class="card-header card-header-icon" data-background-color="purple">
                             <i class="material-icons">add_box</i>
                         </div>
-                    </a>
+                    </a> --}}
                     <div class="card-content">
                         <h4 class="card-title">{{ $title }}</h4>
                         <div class="toolbar">
@@ -26,13 +29,14 @@
                                         <th>Gambar</th>
                                         <th>Jenis</th>
                                         <th>Harga</th>
+                                        <th>Status</th>
                                         <th>Tanggal buat</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
-                                <tfoot>
+                                {{-- <tfoot>
                                     <tr>
                                         <th>No.</th>
                                         <th>Judul</th>
@@ -40,10 +44,11 @@
                                         <th>Gambar</th>
                                         <th>Jenis</th>
                                         <th>Harga</th>
+                                        <th>Status</th>
                                         <th>Tanggal buat</th>
                                         <th class="text-right">Actions</th>
                                     </tr>
-                                </tfoot>
+                                </tfoot> --}}
                             </table>
                         </div>
                     </div>
@@ -72,6 +77,7 @@
                     { data:'image',name:'image' },
                     { data:'type',name:'type' },
                     { data:'price',name:'price' },
+                    { data:'type',name:'type' },
                     { data:'date',name:'date'},
                     { data:'action',name:'action'},
                 ]

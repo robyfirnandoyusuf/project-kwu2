@@ -12,7 +12,7 @@ use Modules\User\Http\Requests\UserRequest;
 
 use App\Models\User;
 use App\Models\RefRole;
-use App\Models\Image;
+use App\Models\Media;
 use App\Models\RefStatus;
 
 class UserController extends Controller
@@ -150,9 +150,9 @@ class UserController extends Controller
                 $cols = [
                     'user_id' => Auth::id(),
                     'file' => str_replace('upload/', '', $file),
-                    'type' => Image::AVATAR
+                    'type' => Media::AVATAR
                 ];
-                $image_id = Image::insertGetId($cols);
+                $image_id = Media::insertGetId($cols);
             }
             $user->password = $request->password;
             $user->phone = $request->phone;
@@ -205,13 +205,13 @@ class UserController extends Controller
             $user->email = $request->email;
             if ($request->hasFile('avatar')) {
                 if ($file = $request->avatar->store('/upload', 'public')) {
-                    Image::where(['type' => Image::AVATAR, 'user_id' => Auth::id()])->delete();
+                    Media::where(['type' => Media::AVATAR, 'user_id' => Auth::id()])->delete();
                     $cols = [
                         'user_id' => Auth::id(),
                         'file' => str_replace('upload/', '', $file),
-                        'type' => Image::AVATAR
+                        'type' => Media::AVATAR
                     ];
-                    $image_id = Image::insertGetId($cols);
+                    $image_id = Media::insertGetId($cols);
                 }
                 $user->image_id = $image_id;
             }
