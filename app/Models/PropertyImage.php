@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class PropertyImage extends Model
 {
     use HasFactory;
+
+    public function createby()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function media()
+    {
+        return $this->hasOne(Media::class, 'id', 'media_id');
+    }
 }

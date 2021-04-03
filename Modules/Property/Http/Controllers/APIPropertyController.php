@@ -12,6 +12,8 @@ use Auth;
 use DB;
 
 use App\Models\Property;
+use App\Models\PropertyImage;
+use App\Models\Media;
 use Modules\Property\Transformers\PropertyResource;
 
 class APIPropertyController extends Controller
@@ -36,6 +38,8 @@ class APIPropertyController extends Controller
      */
     public function store(Request $request)
     {
+        // validation
+
         $user = Auth::user();
 
         DB::beginTransaction();
@@ -62,7 +66,17 @@ class APIPropertyController extends Controller
             $property->save();
 
             // Create images
+            foreach( $request->property_image_ids as $key => $data ) {
+                $image = new PropertyImage;
+                $image->property_id = $property->id;
+                $image->user_id = $user->id;
+                $image->media_id = $data;
+                $image->sequence = $key;
+                $image->save();
+            }
 
+            // Update media status
+            Media::whereIn('id', $request->property_image_ids)->update(['is_used' => 1]);
 
             DB::commit();
 
