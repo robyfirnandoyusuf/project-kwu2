@@ -44,7 +44,7 @@ class PropertyResource extends JsonResource
             "square_meter"  => $this->square_meter,
             "active_status" => $this->active_status,
             "basic_price"   => $this->basic_price,
-            "property_images" => MediaResource::collection($this->gallery())
+            "property_images" => MediaResource::collection($this->gallery()->get(['file', 'media.id']))
         ];
     }
 }
