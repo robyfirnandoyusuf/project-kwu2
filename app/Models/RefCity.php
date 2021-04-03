@@ -11,6 +11,6 @@ class RefCity extends Model
 
     public function province()
     {
-        return $this->hasOne(Province::class, 'id', 'province_id');
+        return $this->hasOne(RefProvince::class, 'id', 'province_id');
     }
 }

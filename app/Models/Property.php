@@ -17,11 +17,15 @@ class Property extends Model
 
     public function thumbnail()
     {
-        return $this->hasOne(PropertyImage::class, 'property_id', 'id')->orderBy('sequence')->first();
+        return $this->hasOne(PropertyImage::class, 'id', 'property_id')->orderBy('sequence')->first();
     }
 
     public function gallery()
     {
-        return $this->hasMany(PropertyImage::class, 'property_id', 'id')->orderBy('sequence');
+        return $this->hasMany(PropertyImage::class, 'property_id', 'id')->orderBy('sequence')->get();
+    }
+
+    public function district() {
+        return $this->hasOne(RefDistrict::class, 'id', 'district_id');
     }
 }

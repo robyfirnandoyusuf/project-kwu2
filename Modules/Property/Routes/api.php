@@ -24,5 +24,10 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'uses' => 'APIPropertyController@store',
             'as' => 'api.property.store'
         ]);
+
+        Route::get('/{property}', [
+            'uses' => 'APIPropertyController@show',
+            'as' => 'api.property.show'
+        ]);
     });
 });
