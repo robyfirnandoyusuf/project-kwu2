@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use Modules\Rent\Http\Requests\RentRequest;
 use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use \Illuminate\Http\Response;
 
 use App\Models\Rent;
 
@@ -49,12 +50,12 @@ class ApiRentController extends Controller
             $rent->active_status = RefStatus::status(RefStatus::PENDING)->ref;
             $rent->save();
         } catch (\Exception $e) {
-            $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
             $this->success = false;
             $this->data = $e->getMessage();
         }
 
-        $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $this->code = Response::HTTP_OK;
         $this->success = true;
         return $this->json();
     }
@@ -105,12 +106,12 @@ class ApiRentController extends Controller
                 'active_status' => $ref
             ]);
         } catch (\Exception $e) {
-            $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
             $this->success = false;
             $this->data = $e->getMessage();
         }
 
-        $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $this->code = Response::HTTP_OK;
         $this->success = true;
         return $this->json();
     }
