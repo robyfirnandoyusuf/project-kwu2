@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 use App\Traits\APITrait;
 use Auth;
@@ -163,7 +164,14 @@ class APIPropertyController extends Controller
             'square_meter'  => 'required',
             'active_status' => 'required|exists:ref_status,id',
             'basic_price'   => 'required',
-            'property_image_ids' => 'required|array|min:1|exists:property_images,id'
+            'property_image_ids' => [
+                'required',
+                'array',
+                'min:1',
+                Rule::exists('media', 'id')->where(function ($query) {
+                    return $query->where('type', 'property');
+                }),
+            ]
         ];
 
         $validatorMessage = [];
