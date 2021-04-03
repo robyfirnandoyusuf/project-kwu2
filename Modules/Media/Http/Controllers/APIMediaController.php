@@ -24,10 +24,9 @@ class APIMediaController extends Controller
     public function index()
     {
         $media = Media::where('user_id', Auth::user()->id)->paginate(10);
-        MediaResource::collection($media);
 
         $this->success = true;
-        $this->data = MediaResource::collection($media);
+        $this->data = MediaResource::collection($media)->response()->getData(true);
         $this->status = Response::HTTP_OK;
 
         return $this->json();
