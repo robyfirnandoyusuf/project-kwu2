@@ -15,8 +15,8 @@ class AddForeignKeysToPropertyImages extends Migration
     {
         Schema::table('property_images', function (Blueprint $table) {
             //
-            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
-            $table->foreign('media_id')->references('id')->on('media')->cascadeOnDelete();
+            $table->foreign('property_id', 'property_images_ibfk_1')->references('id')->on('properties')->cascadeOnDelete();
+            $table->foreign('media_id', 'property_images_ibfk_2')->references('id')->on('media')->cascadeOnDelete();
         });
     }
 
@@ -28,7 +28,8 @@ class AddForeignKeysToPropertyImages extends Migration
     public function down()
     {
         Schema::table('property_images', function (Blueprint $table) {
-            //
+            $table->dropForeign('property_images_ibfk_1');
+            $table->dropForeign('property_images_ibfk_2');
         });
     }
 }
