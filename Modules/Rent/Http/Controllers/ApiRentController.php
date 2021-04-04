@@ -11,6 +11,7 @@ use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use \Illuminate\Http\Response;
 use Auth;
+use Carbon\Carbon;
 
 use App\Models\Rent;
 
@@ -67,6 +68,7 @@ class ApiRentController extends Controller
             $rent->property_id = $request->property_id;
             $rent->user_id = Auth::id();
             $rent->active_status = RefStatus::status(RefStatus::PENDING)->ref;
+            $rent->enter_date = Carbon::createFromFormat('d/m/Y', $request->enter_date)->toDateTimeString();
             $rent->save();
         } catch (\Exception $e) {
             $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
