@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Traits\APITrait;
 use Auth;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ApiFavoriteController extends Controller
 {
@@ -44,7 +47,10 @@ class ApiFavoriteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $this->validateFavorite($request);
+        if (!empty($validate))
+            return $validate;
+
         $propId = $request->property_id;
         
         try {
@@ -99,8 +105,49 @@ class ApiFavoriteController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function destroy(Favorite $favorite)
     {
-        //
+        try {
+            $this->status = true;
+            $this->code = \Illuminate\Http\Response::HTTP_OK;
+            $favorite->delete();
+        } catch (\Exception $e) {
+            $this->status = false;
+            $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        return $this->json();
+    }
+
+    /* solution request class conflict ?! */
+    private function validateFavorite(Request $request) {
+        $uri = $request->route()->uri;
+        switch (true) {
+            case str_contains($uri, "/favorite/store"):
+                $rules = [
+                    'property_id' => [
+                        'required',
+                        Rule::exists('properties', 'id'),
+                        Rule::unique('favorites')->where(function ($query) use($request) {
+                            return $query->where('property_id', $request->property_id)
+                                ->where('user_id', Auth::id());
+                        }),
+                    ],
+                ];
+                break;
+        }
+
+        $validatorMessage = [];
+
+        $validator = Validator::make($request->all(), $rules, $validatorMessage);
+        $errorString = implode(", ",$validator->messages()->all());
+
+        if ($validator->fails()) {
+            $this->success = false;
+            $this->data = $validator->errors();
+            $this->code = Response::HTTP_BAD_REQUEST;
+            $this->message = $errorString;
+            return $this->json();
+        }
     }
 }
