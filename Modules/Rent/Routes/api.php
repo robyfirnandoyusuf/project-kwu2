@@ -23,7 +23,7 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'uses' => 'ApiRentController@store',
             'as' => 'api.rent.post-rent'
         ]);
-        Route::post('update-rent', [
+        Route::put('/{rent}', [
             'uses' => 'ApiRentController@update',
             'as' => 'api.rent.update-rent'
         ]);

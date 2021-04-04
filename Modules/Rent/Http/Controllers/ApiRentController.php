@@ -113,13 +113,12 @@ class ApiRentController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request)
+    public function update(Request $request, Rent $rent)
     {
         $validate = $this->validateRent($request);
         if (!empty($validate))
             return $validate;
 
-        $propertyId = $request->property_id;
         $status = $request->status; // accepted / deny
         $ref = "";
         switch ($status) {
@@ -127,14 +126,13 @@ class ApiRentController extends Controller
                 $ref = RefStatus::status(RefStatus::ACCEPT)->ref;
                 break;
             default:
-                $ref = RefStatus::status(RefStatus::PENDING)->ref;
+                $ref = RefStatus::status(RefStatus::DENY)->ref;
                 break;
         }
 
         try {
-            Rent::where(['user_id' => Auth::id(), 'property_id' => $propertyId])->update([
-                'active_status' => $ref
-            ]);
+            $rent->active_status = $ref;
+            $rent->save();
         } catch (\Exception $e) {
             $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
             $this->success = false;
@@ -159,6 +157,7 @@ class ApiRentController extends Controller
     /* solution request class conflict ?! */
     private function validateRent(Request $request) {
         $uri = $request->route()->uri;
+        $method = $request->route()->methods[0];
         switch (true) {
             case str_contains($uri, "/rent/store"):
                 $rules = [
@@ -176,15 +175,11 @@ class ApiRentController extends Controller
                     ],
                 ];
                 break;
-            case str_contains($uri, "/rent/update"):
+            case str_contains($uri, "/rent") && $method == 'PUT':
                 $rules = [
-                    'property_id' => [
-                        'required',
-                        Rule::exists('properties', 'id')
-                    ],
                     'status' => [
                         'required',
-                        Rule::in(['mitra', 'user'])
+                        Rule::in(['accept', 'deny'])
                     ],
                 ];
                 break;
