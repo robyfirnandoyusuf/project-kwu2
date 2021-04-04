@@ -41,6 +41,7 @@ class PropertyResource extends JsonResource
             "rules"         => $this->rules,
             "room_total"    => $this->room_total,
             "type"          => $this->type,
+            "type_string"          => $this->refType->title,
             "square_meter"  => $this->square_meter,
             "active_status" => $this->active_status,
             "basic_price"   => $this->basic_price,
