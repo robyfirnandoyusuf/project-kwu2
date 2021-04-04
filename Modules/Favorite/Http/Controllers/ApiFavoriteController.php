@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Traits\APITrait;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Auth;
 
 class ApiFavoriteController extends Controller
 {
@@ -20,8 +20,7 @@ class ApiFavoriteController extends Controller
      */
     public function index(Request $request)
     {
-        $user = JWTAuth::user();
-        $favorite = Favorite::with(['property', 'user'])->where('user_id', $user->id)->paginate($this->limit);
+        $favorite = Favorite::with(['property', 'user'])->where('user_id', Auth::id())->paginate($this->limit);
         $this->status = true;
         $this->code = \Illuminate\Http\Response::HTTP_OK;
         $this->data = $favorite;
@@ -46,13 +45,12 @@ class ApiFavoriteController extends Controller
     public function store(Request $request)
     {
         //
-        $user = JWTAuth::toUser();
         $propId = $request->property_id;
         
         try {
             $favorite = new Favorite;
             $favorite->property_id = $propId;
-            $favorite->user_id = $user->id;
+            $favorite->user_id = Auth::id();
             $favorite->save();
 
             $this->status = true;

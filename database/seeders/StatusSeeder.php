@@ -57,6 +57,16 @@ class StatusSeeder extends Seeder
                 'ref' => 10,
                 'title' => 'chargeback'
             ],
+
+            // rent
+            [
+                'ref' => 11,
+                'title' => 'waiting'
+            ],
+            [
+                'ref' => 12,
+                'title' => 'accept'
+            ],
         ];
 
         RefStatus::insert($data);

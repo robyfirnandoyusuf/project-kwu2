@@ -18,6 +18,7 @@ class CreateRentsTable extends Migration
             $table->bigInteger('property_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
             $table->integer('active_status');
+            $table->datetime('enter_date');
             $table->timestamps();
         });
     }
