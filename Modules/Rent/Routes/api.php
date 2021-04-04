@@ -13,6 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/rent', function (Request $request) {
-    return $request->user();
+Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
+    Route::group(['prefix' => 'rent'], function () {
+        Route::post('get-rent', [
+            'uses' => 'ApiRentController@index',
+            'as' => 'api.rent.get-rent'
+        ]);
+        Route::post('store-rent', [
+            'uses' => 'ApiRentController@store',
+            'as' => 'api.rent.post-rent'
+        ]);
+        Route::post('update-rent', [
+            'uses' => 'ApiRentController@update',
+            'as' => 'api.rent.update-rent'
+        ]);
+    });
 });
