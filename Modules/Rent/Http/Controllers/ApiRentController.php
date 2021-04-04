@@ -10,6 +10,7 @@ use Modules\Rent\Http\Requests\RentRequest;
 use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use \Illuminate\Http\Response;
+use Auth;
 
 use App\Models\Rent;
 
@@ -20,9 +21,28 @@ class ApiRentController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('rent::index');
+        $type = $request->type;
+        $rent = Rent::with(['property']);
+
+        switch ($type) {
+            case 'mitra': //get list rent by mitra
+                $rent = $rent->whereHas('property', function ($q) {
+                    $q->where('user_id', Auth::id());
+                })->get();
+                break;
+            
+            default://get list rent by user
+                $rent = $rent->with(['property'])->where('user_id', Auth::id())->get();
+                break;
+        }
+
+        $this->success = true;
+        $this->code = Response::HTTP_OK;
+        $this->data = $rent;
+        
+        return $this->json();
     }
 
     /**
@@ -43,10 +63,9 @@ class ApiRentController extends Controller
     public function store(Request $request)
     {
         try {
-            $user = JWTAuth::user();
             $rent = new Rent;
             $rent->property_id = $request->property_id;
-            $rent->user_id = $user->id;
+            $rent->user_id = Auth::id();
             $rent->active_status = RefStatus::status(RefStatus::PENDING)->ref;
             $rent->save();
         } catch (\Exception $e) {
@@ -88,7 +107,6 @@ class ApiRentController extends Controller
      */
     public function update(Request $request)
     {
-        $userId = $request->user_id;
         $propertyId = $request->property_id;
         $status = $request->status; // accepted / deny
         $ref = "";
@@ -102,7 +120,7 @@ class ApiRentController extends Controller
         }
 
         try {
-            Rent::where(['user_id' => $userId, 'property_id', $propertyId])->update([
+            Rent::where(['user_id' => Auth::id(), 'property_id' => $propertyId])->update([
                 'active_status' => $ref
             ]);
         } catch (\Exception $e) {
