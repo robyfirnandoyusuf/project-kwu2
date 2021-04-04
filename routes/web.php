@@ -55,5 +55,7 @@ Route::group(['prefix' => 'property'], function () {
     Route::get('show/{property}', [FrontendPropertyController::class, 'show'])->name('frontend.property.show');
 });
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', function() {
+    return redirect()->route('admin.auth.get');
+});
 Route::post('/get-city', [CityController::class, 'index'])->name('select.city');
