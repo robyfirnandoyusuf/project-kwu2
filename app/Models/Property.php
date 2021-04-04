@@ -7,8 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model
 {
-    // protected $appends = ['new_date'];
+    // protected $appends = ['new_date'];    
     use HasFactory;
+    public static $search = [
+        "title",
+        "desc",
+        "district_id",
+        "postal_code",
+        "address",
+        "lat",
+        "long",
+        "facilities",
+        "poi",
+        "rules",
+        "room_total",
+        "type",
+        "square_meter",
+        "active_status",
+        "basic_price"
+    ];
+    
 
     public function createby()
     {

@@ -28,9 +28,28 @@ class APIPropertyController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+        $q = $request->q;
+        $per_page = 10;
+
+        if ($request->per_page) {
+            $per_page = $request->per_page;
+        }
+
+        $properties = Property::where('user_id', Auth::user()->id);
+
+        if($q != "" ) {
+            $properties = $properties->whereLike(Property::$search, $q);
+        }
+
+        $properties = $properties->paginate($per_page);
+
+        $this->success = true;
+        $this->data = PropertyResource::collection($properties)->response()->getData(true);
+        $this->status = Response::HTTP_OK;
+
+        return $this->json();
     }
 
     /**
@@ -77,10 +96,10 @@ class APIPropertyController extends Controller
     {
 
         // IDOR validation
-        if (Auth::user()->id != $property->user_id) {
+        if (!$this->idorChecker($property->user_id)) {
             $this->success = false;
             $this->code = Response::HTTP_BAD_REQUEST;
-            return $this->json();    
+            return $this->json(); 
         }
         
         $this->success = true;
@@ -137,7 +156,18 @@ class APIPropertyController extends Controller
      */
     public function destroy(Property $property)
     {
-        //
+        if (!$this->idorChecker($property->user_id)) {
+            $this->success = false;
+            $this->code = Response::HTTP_BAD_REQUEST;
+            return $this->json(); 
+        }
+
+        $property->delete();
+
+        $this->success = true;
+        $this->code = Response::HTTP_OK;
+        $this->message = "Success delete property!";
+        return $this->json();
     }
 
      /**

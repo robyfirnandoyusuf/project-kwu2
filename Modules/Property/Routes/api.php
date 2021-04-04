@@ -34,5 +34,10 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'uses' => 'APIPropertyController@update',
             'as' => 'api.mitra.property.update'
         ]);
+
+        Route::delete('/{property}', [
+            'uses' => 'APIPropertyController@destroy',
+            'as' => 'api.mitra.property.destroy'
+        ]);
     });
 });

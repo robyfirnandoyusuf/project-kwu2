@@ -7,6 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\Media;
+use Auth;
 
 class Controller extends BaseController
 {
@@ -37,5 +38,13 @@ class Controller extends BaseController
 
         return false;
 
+    }
+
+    public function idorChecker($user_id): bool {
+        // IDOR validation
+        if (Auth::user()->id == $user_id) {
+            return true;
+        }
+        return false;
     }
 }
