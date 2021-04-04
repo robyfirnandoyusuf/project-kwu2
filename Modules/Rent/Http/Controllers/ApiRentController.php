@@ -5,6 +5,7 @@ namespace Modules\Rent\Http\Controllers;
 use App\Models\RefStatus;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Modules\Rent\Http\Requests\RentRequest;
 use App\Traits\APITrait;
@@ -12,6 +13,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use \Illuminate\Http\Response;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\Rent;
 
@@ -63,6 +65,10 @@ class ApiRentController extends Controller
      */
     public function store(Request $request)
     {
+        $validate = $this->validateRent($request);
+        if (!empty($validate))
+            return $validate;
+        
         try {
             $rent = new Rent;
             $rent->property_id = $request->property_id;
@@ -109,6 +115,10 @@ class ApiRentController extends Controller
      */
     public function update(Request $request)
     {
+        $validate = $this->validateRent($request);
+        if (!empty($validate))
+            return $validate;
+
         $propertyId = $request->property_id;
         $status = $request->status; // accepted / deny
         $ref = "";
@@ -144,5 +154,53 @@ class ApiRentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /* solution request class conflict ?! */
+    private function validateRent(Request $request) {
+        $uri = $request->route()->uri;
+        switch (true) {
+            case str_contains($uri, "/rent/store"):
+                $rules = [
+                    'property_id' => [
+                        'required',
+                        Rule::exists('properties', 'id'),
+                        Rule::unique('rents')->where(function ($query) use($request) {
+                            return $query->where('property_id', $request->property_id)
+                                ->where('user_id', Auth::id());
+                        }),
+                    ],
+                    'enter_date' => [
+                        'required',
+                        'date_format:d/m/Y'
+                    ],
+                ];
+                break;
+            case str_contains($uri, "/rent/update"):
+                $rules = [
+                    'property_id' => [
+                        'required',
+                        Rule::exists('properties', 'id')
+                    ],
+                    'status' => [
+                        'required',
+                        Rule::in(['mitra', 'user'])
+                    ],
+                ];
+                break;
+        }
+
+        $validatorMessage = [];
+
+        $validator = Validator::make($request->all(), $rules, $validatorMessage);
+        $errorString = implode(", ",$validator->messages()->all());
+
+        if ($validator->fails()) {
+            $this->success = false;
+            $this->data = $validator->errors();
+            $this->code = Response::HTTP_BAD_REQUEST;
+            $this->message = $errorString;
+            return $this->json();
+        }
     }
 }
