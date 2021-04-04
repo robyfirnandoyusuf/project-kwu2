@@ -30,8 +30,8 @@
                                         <th>Jenis</th>
                                         <th>Harga</th>
                                         <th>Status</th>
-                                        <th>Tanggal buat</th>
-                                        <th class="disabled-sorting text-right">Actions</th>
+                                        <th>Terakhir Diubah</th>
+                                        <th class="text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -70,16 +70,19 @@
                 "scrollX": true,
                 serverSide: true,
                 ajax: '{{route('admin.dt.property')}}',
+                buttons: [
+                    'copy', 'excel', 'pdf'
+                ],
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                    { data: 'DT_RowIndex', orderable: false, searchable: false},
                     { data:'title',name:'title' },
-                    { data:'author',name:'author' },
-                    { data:'image',name:'image' },
+                    { data:'user_name',name:'users.name' },
+                    { data:'image',name:'image', orderable: false, searchable: false},
                     { data:'type',name:'type' },
-                    { data:'price',name:'price' },
-                    { data:'type',name:'type' },
-                    { data:'date',name:'date'},
-                    { data:'action',name:'action'},
+                    { data:'price',name:'basic_price' },
+                    { data:'active_status',name:'active_status', orderable: false, searchable: false },
+                    { data:'last_update',name:'updated_at'},
+                    { data:'action',name:'action', orderable: false, searchable: false},
                 ]
             });
     </script>

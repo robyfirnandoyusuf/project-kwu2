@@ -21,51 +21,49 @@ class PropertyController extends Controller
      */
     public function index()
     {
+        Session::forget('dz-sess');
         $data['title'] = 'Listing Property';
         return view('property::admin.property.index', $data);
     }
 
     public function datatable()
     {
-        $model = Property::with(['thumbnail', 'refType'])
-                    ->select("properties.*","users.id as user_id", 'users.name as user_name')
-                    ->Join("users", 'users.id', 'properties.user_id');
-            // ->where('user_id', Auth::id())
-            // ->orderBy('created_at', 'desc');
+        $model = Property::with(['user', 'thumbnail'])
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $dTable = DataTables()->eloquent($model)
-            ->addIndexColumn()
+        $dTable = DataTables()->of($model)->addIndexColumn()
             ->editColumn('title', function ($data) {
                 return $data->title;
             })
             ->editColumn('author', function ($data) {
-                return $data->user_name;
+                return $data->user->name;
             })
             ->editColumn('image', function ($data) {
                 $thumb = 'No Thumbnail';
                 if (!empty($data->thumbnail)) {
-                    $thumb = '<img src="/storage/' . $data->thumbnail->sortBy('sequence')->first()->file . '" style="width:60px !important;height:auto !important;">';
+                    $thumb = '<img src="/storage/upload/' . $data->thumbnail->file . '" style="width:60px !important;height:auto !important;">';
                 }
                 return $thumb;
-                // return print_r($data->thumbnail()->orderBy('sequence')->get());
             })
             ->editColumn('type', function ($data) {
-                return ucfirst($data->refType->title);
+                return ucfirst($data->category->name);
             })
             ->editColumn('price', function ($data) {
-                return "Rp." . number_format($data->basic_price);
+                return "Rp." . number_format($data->price);
             })
-            ->editColumn('active_status', function ($data) {
-                $btn = '<a class="btn btn-warning btn-sm">Non Aktif</a>';
+            ->editColumn('status', function ($data) {
+                $btn = '<button class="btn btn-warning btn-sm">Non Aktif</button>';
 
                 if ($data->active_status == 1) {
-                    $btn = '<a class="btn btn-success btn-sm">Aktif</a>';
+                    $btn = '<button class="btn btn-success btn-sm">Aktif</button>';
                 }
 
                 return $btn;
             })
-            ->editColumn('last_update', function ($data) {
-                return $data->updated_at->diffForhumans();
+            ->editColumn('date', function ($data) {
+                return $data->new_date;
             })
             ->addColumn('action', function ($data) {
                 $btn = "";
@@ -80,7 +78,7 @@ class PropertyController extends Controller
                         </a>';
                 return $btn;
             })
-            ->rawColumns(['action', 'image', 'active_status']);
+            ->rawColumns(['action', 'image']);
 
         return $dTable->make(true);
     }

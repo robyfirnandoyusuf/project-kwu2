@@ -35,7 +35,7 @@ class Property extends Model
 
     public function thumbnail()
     {
-        return $this->hasOne(PropertyImage::class, 'id', 'property_id');
+        return $this->belongsToMany(Media::class, PropertyImage::class, 'property_id', 'media_id');
     }
 
     public function gallery()
@@ -45,5 +45,10 @@ class Property extends Model
 
     public function district() {
         return $this->hasOne(RefDistrict::class, 'id', 'district_id');
+    }
+
+    public function refType()
+    {
+        return $this->hasOne(RefType::class, 'id', 'type');
     }
 }

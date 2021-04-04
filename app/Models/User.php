@@ -12,7 +12,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
-    protected $with = ['ref_status', 'image', 'ref_role'];
+    // protected $with = ['ref_status', 'image', 'ref_role'];
     protected $appends = ['created_date'];
 
     const ROLE_ADMIN = 'admin';
