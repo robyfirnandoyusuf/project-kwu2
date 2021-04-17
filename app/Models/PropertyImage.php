@@ -18,4 +18,8 @@ class PropertyImage extends Model
     {
         return $this->hasOne(Media::class, 'id', 'media_id');
     }
+
+    public function property(){
+        return $this->belongsTo(Property::class,'property_id');
+      }
 }

@@ -61,29 +61,47 @@
         <!-- end row -->
     </div>
 </div>
+<div class="modal fade" id="editPropertyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   
+</div>
+
 @endsection
 
 @section('script')
     <script>
         $('.dtable').DataTable({
-                processing: true,
-                "scrollX": true,
-                serverSide: true,
-                ajax: '{{route('admin.dt.property')}}',
-                buttons: [
-                    'copy', 'excel', 'pdf'
-                ],
-                columns: [
-                    { data: 'DT_RowIndex', orderable: false, searchable: false},
-                    { data:'title',name:'title' },
-                    { data:'user_name',name:'users.name' },
-                    { data:'image',name:'image', orderable: false, searchable: false},
-                    { data:'type',name:'type' },
-                    { data:'price',name:'basic_price' },
-                    { data:'active_status',name:'active_status', orderable: false, searchable: false },
-                    { data:'last_update',name:'updated_at'},
-                    { data:'action',name:'action', orderable: false, searchable: false},
-                ]
+            processing: true,
+            "scrollX": true,
+            serverSide: true,
+            ajax: '{{route('admin.dt.property')}}',
+            buttons: [
+                'copy', 'excel', 'pdf'
+            ],
+            columns: [
+                { data: 'DT_RowIndex', orderable: false, searchable: false},
+                { data:'title',name:'title' },
+                { data:'user_name',name:'users.name' },
+                { data:'image',name:'image', orderable: false, searchable: false},
+                { data:'type',name:'type' },
+                { data:'price',name:'basic_price' },
+                { data:'active_status',name:'active_status', orderable: false, searchable: false },
+                { data:'last_update',name:'updated_at'},
+                { data:'action',name:'action', orderable: false, searchable: false},
+            ]
+        });
+
+        let getDetail = (id) => {
+            $.ajax({
+                url: '{{ route("admin.popup.property.edit") }}',
+                type: 'GET',
+                dataType: 'json',
+                data: { id },
+                complete: function(data){
+                    $('#editPropertyModal').html(data.responseText)
+                    $('#editPropertyModal').modal('show')
+                }
             });
+        }
+
     </script>
 @endsection

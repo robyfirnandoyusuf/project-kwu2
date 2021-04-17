@@ -40,7 +40,7 @@ class Property extends Model
 
     public function gallery()
     {
-        return $this->belongsToMany(Media::class, PropertyImage::class, 'property_id', 'media_id');
+        return $this->belongsToMany(Media::class, PropertyImage::class, 'property_id', 'media_id')->withPivot('id');
     }
 
     public function district() {
