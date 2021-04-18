@@ -22,4 +22,11 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api']], function () {
             'as' => 'api.auth.post-auth'
         ]);
     });
+
+    Route::group(['prefix' => 'register'], function () {
+        Route::post('post-register', [
+            'uses' => 'ApiRegisterController@storeRegister',
+            'as' => 'api.auth.post-register'
+        ]);
+    });
 });
