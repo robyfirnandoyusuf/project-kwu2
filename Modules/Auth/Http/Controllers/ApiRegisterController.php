@@ -13,7 +13,7 @@ use App\Traits\MediaTrait;
 use Modules\Auth\Http\Requests\RegisterRequest;
 use Modules\Media\Http\Controllers\APIMediaController;
 
-class ApiRegisterController extends APIMediaController
+class ApiRegisterController extends Controller
 {
     use APITrait, MediaTrait;
     /**
