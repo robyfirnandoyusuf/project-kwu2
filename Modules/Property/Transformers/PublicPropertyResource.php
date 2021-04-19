@@ -5,7 +5,7 @@ namespace Modules\Property\Transformers;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Media\Transformers\MediaResource;
 
-class PropertyResource extends JsonResource
+class PublicPropertyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,6 +18,7 @@ class PropertyResource extends JsonResource
         $district = $this->district;
         $city = $district->city;
         $province = $city->province;
+        $owner = $this->createby;
 
         $data = [
             'id'            => $this->id,
@@ -37,20 +38,19 @@ class PropertyResource extends JsonResource
                 ]
             ],
             "facilities"    => $this->facilities,
-            "poi"           => $this->poi,
-            "rules"         => $this->rules,
             "room_total"    => $this->room_total,
             "is_featured"   => $this->is_featured,
-            "is_discount"   => $this->is_discount,
+            "is_discount"   => $this->is_discount != null ? $this->is_discount : 0 ,
             "type"          => $this->type,
             "type_string"   => $this->refType->title,
-            "square_meter"  => $this->square_meter,
             "active_status" => $this->active_status,
             "basic_price"   => $this->basic_price,
             "property_images" => MediaResource::collection($this->gallery()->get(['file', 'media.id'])),
+            "owner" => [
+                "name" => $owner->name,
+            ]
         ];
 
-        // return parent::toArray($request);
         return $data;
     }
 }

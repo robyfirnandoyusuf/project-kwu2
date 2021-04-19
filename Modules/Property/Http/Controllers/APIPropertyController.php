@@ -17,6 +17,7 @@ use App\Models\Property;
 use App\Models\PropertyImage;
 use App\Models\Media;
 use Modules\Property\Transformers\PropertyResource;
+use Modules\Property\Transformers\PublicPropertyResource;
 
 class APIPropertyController extends Controller
 {
@@ -289,7 +290,7 @@ class APIPropertyController extends Controller
         $properties = $properties->paginate($per_page);
 
         $this->success = true;
-        $this->data = PropertyResource::collection($properties)->response()->getData(true);
+        $this->data = PublicPropertyResource::collection($properties)->response()->getData(true);
         $this->status = Response::HTTP_OK;
 
         return $this->json();

@@ -30,7 +30,7 @@ class CreatePropertiesTable extends Migration
             $table->integer('type');
             $table->string('square_meter');
             $table->integer('active_status')->default(0);
-            $table->integer('is_favorite')->default(0);
+            $table->integer('is_discount')->default(0);
             $table->integer('is_featured')->default(0);
             $table->double('basic_price');
             $table->timestamps();
