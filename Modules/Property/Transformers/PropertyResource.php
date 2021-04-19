@@ -19,13 +19,13 @@ class PropertyResource extends JsonResource
         $city = $district->city;
         $province = $city->province;
 
-        // return parent::toArray($request);
-        return [
+        $data = [
             'id'            => $this->id,
             "title"         => $this->title,
             "desc"          => $this->desc,
             "location"      => [
                 "district_id" => $this->district_id,
+                "city_id"     => $city->id,
                 "postal_code" => $this->postal_code,
                 "address"     => $this->address,
                 "lat"         => $this->lat,
@@ -40,12 +40,17 @@ class PropertyResource extends JsonResource
             "poi"           => $this->poi,
             "rules"         => $this->rules,
             "room_total"    => $this->room_total,
+            "is_featured"   => $this->is_featured,
+            "is_discount"   => $this->is_discount,
             "type"          => $this->type,
-            "type_string"          => $this->refType->title,
+            "type_string"   => $this->refType->title,
             "square_meter"  => $this->square_meter,
             "active_status" => $this->active_status,
             "basic_price"   => $this->basic_price,
             "property_images" => MediaResource::collection($this->gallery()->get(['file', 'media.id']))
         ];
+
+        // return parent::toArray($request);
+        return $data;
     }
 }

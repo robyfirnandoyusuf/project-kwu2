@@ -80,7 +80,7 @@ class APIPropertyController extends Controller
             DB::rollback();
             $this->success = false;
             $this->message = $e->getMessage();
-            $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->code = Response::HTTP_BAD_REQUEST;
         }
 
     returnStatement:
@@ -141,7 +141,7 @@ class APIPropertyController extends Controller
             DB::rollback();
             $this->success = false;
             $this->message = $e->getMessage();
-            $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $this->code = Response::HTTP_BAD_REQUEST;
         }
 
     returnStatement:
@@ -212,7 +212,7 @@ class APIPropertyController extends Controller
         if ($validator->fails()) {
             $this->success = false;
             $this->data = $validator->errors();
-            $this->code = Response::HTTP_BAD_REQUEST;
+            $this->status = Response::HTTP_BAD_REQUEST;
             $this->message = $errorString;
             return $this->json();
         }
@@ -247,7 +247,66 @@ class APIPropertyController extends Controller
         $property->square_meter = $request->square_meter;
         $property->active_status= $request->active_status;
         $property->basic_price  = $request->basic_price;
+        $property->is_featured  = $request->is_featured;
 
         $property->save();
+    }
+
+    /**
+     * Display a listing of the resource.
+     * @return Renderable
+     */
+    public function public_index(Request $request)
+    {
+        $q = $request->q;
+        $per_page = 10;
+
+        if ($request->per_page) {
+            $per_page = $request->per_page;
+        }
+
+        $properties = Property::with(['district', 'district.city'])
+            ->where('active_status', 1);
+
+        if ($request->city_id != 0) {
+            $properties = $properties->whereHas('district.city', function($q) use ($request) {
+                $q->where('id', $request->city_id);
+            });
+        }
+
+        if ($request->is_featured != 0) {
+            $properties = $properties->where("is_featured", $request->is_featured);
+        }
+
+        if ($request->mitra_id != 0 ) {
+            $properties = $properties->where("user_id", $request->mitra_id);
+        }
+
+        if($q != "" ) {
+            $properties = $properties->whereLike(Property::$search, $q);
+        }
+
+        $properties = $properties->paginate($per_page);
+
+        $this->success = true;
+        $this->data = PropertyResource::collection($properties)->response()->getData(true);
+        $this->status = Response::HTTP_OK;
+
+        return $this->json();
+    }
+
+    /**
+     * Show the specified resource.
+     * @param Property $property
+     * @return Renderable
+     */
+    public function public_show(Property $property)
+    {
+        
+        $this->success = true;
+        $this->code = Response::HTTP_OK;
+        $this->data = new PropertyResource($property);
+
+        return $this->json();
     }
 }

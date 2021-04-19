@@ -13,31 +13,46 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
-    Route::group(['prefix' => 'mitra/property'], function () {
-        Route::get('/', [
-            'uses' => 'APIPropertyController@index',
-            'as' => 'api.mitra.property.index'
-        ]);
+Route::group(['prefix'=>'v1', 'middleware' => ['jwt.verify']], function () {
+    Route::group(['middleware' => ['jwt.verify']], function() {
+        Route::group(['prefix' => 'mitra/property'], function () {
+            Route::get('/', [
+                'uses' => 'APIPropertyController@index',
+                'as' => 'api.mitra.property.index'
+            ]);
+    
+            Route::post('/', [
+                'uses' => 'APIPropertyController@store',
+                'as' => 'api.mitra.property.store'
+            ]);
+    
+            Route::get('/{property}', [
+                'uses' => 'APIPropertyController@show',
+                'as' => 'api.mitra.property.show'
+            ]);
+    
+            Route::put('/{property}', [
+                'uses' => 'APIPropertyController@update',
+                'as' => 'api.mitra.property.update'
+            ]);
+    
+            Route::delete('/{property}', [
+                'uses' => 'APIPropertyController@destroy',
+                'as' => 'api.mitra.property.destroy'
+            ]);
+        });
+    });
 
-        Route::post('/', [
-            'uses' => 'APIPropertyController@store',
-            'as' => 'api.mitra.property.store'
+    Route::group(['prefix' => 'property'], function() {
+        Route::get('/', [
+            'uses' => 'APIPropertyController@public_index',
+            'as' => 'api.property.index'
         ]);
 
         Route::get('/{property}', [
-            'uses' => 'APIPropertyController@show',
-            'as' => 'api.mitra.property.show'
-        ]);
-
-        Route::put('/{property}', [
-            'uses' => 'APIPropertyController@update',
-            'as' => 'api.mitra.property.update'
-        ]);
-
-        Route::delete('/{property}', [
-            'uses' => 'APIPropertyController@destroy',
-            'as' => 'api.mitra.property.destroy'
+            'uses' => 'APIPropertyController@public_show',
+            'as' => 'api.property.show'
         ]);
     });
+
 });
