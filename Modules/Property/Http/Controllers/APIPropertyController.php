@@ -254,6 +254,12 @@ class APIPropertyController extends Controller
     }
 
     /**
+     * =====================================================================================================
+     * END HELPER FOR PROPERTY
+     * =====================================================================================================
+     */
+
+    /**
      * Display a listing of the resource.
      * @return Renderable
      */
