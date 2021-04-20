@@ -8,5 +8,8 @@
     "Status": true,
     "Auth": true,
     "Media": true,
-    "Favorite": true
+    "Favorite": true,
+    "City": true,
+    "Province": true,
+    "District": true
 }
