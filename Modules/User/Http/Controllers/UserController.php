@@ -146,23 +146,29 @@ class UserController extends Controller
         try {
             $user->name = $request->name;
             $user->email = $request->email;
-            if ($file = $request->avatar->store('/upload', 'public')) {
-                $cols = [
-                    'user_id' => Auth::id(),
-                    'file' => str_replace('upload/', '', $file),
-                    'type' => Media::AVATAR
-                ];
-                $image_id = Media::insertGetId($cols);
-            }
             $user->password = $request->password;
             $user->phone = $request->phone;
-            $user->image_id = $image_id;
+            $user->image_id = null;
             $user->role = $xrole;
             $user->identity = $request->identity;
             $user->active_status = RefStatus::status($request->active_status)->ref;
             $user->gender = $request->gender;
             $user->address = $request->address;
             $user->save();
+            if ($file = $request->avatar->store('/upload', 'public')) {
+                $cols = [
+                    'user_id' => $user->id,
+                    'file' => str_replace('upload/', '', $file),
+                    'type' => Media::AVATAR
+                ];
+
+                $this->_clearMedia($user->id);
+                $image_id = Media::insertGetId($cols);
+                
+                $user = User::find($user->id);
+                $user->image_id = $image_id;
+                $user->save();
+            }
         } catch (\Exception $e) {
             return redirect()->route('admin.user.index', ['type' => $type])->with('error_msg', 'Data gagal ditambah !');
         }
@@ -205,9 +211,10 @@ class UserController extends Controller
             $user->email = $request->email;
             if ($request->hasFile('avatar')) {
                 if ($file = $request->avatar->store('/upload', 'public')) {
-                    Media::where(['type' => Media::AVATAR, 'user_id' => Auth::id()])->delete();
+                    $this->_clearMedia($user->id);
+                    // Media::where(['type' => Media::AVATAR, 'user_id' => Auth::id()])->delete();
                     $cols = [
-                        'user_id' => Auth::id(),
+                        'user_id' => $user->id,
                         'file' => str_replace('upload/', '', $file),
                         'type' => Media::AVATAR
                     ];
@@ -245,5 +252,20 @@ class UserController extends Controller
         }
         
         return back()->withSuccess('Data berhasil dihapus !');
+    }
+
+    private function _clearMedia($userId) {
+        if (empty($userId))
+            $userId = Auth::id();
+        
+        $mediaModel = Media::where(['user_id' => $userId, 'type' => Media::AVATAR]);
+        $media = clone $mediaModel;
+
+        $file = $media->pluck('file');
+        foreach ($file as $key => $value) {
+            Storage::disk('public')->delete('upload/'.$value);
+        }
+
+        return $media->delete();
     }
 }
