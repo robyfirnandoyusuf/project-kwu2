@@ -2,15 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use App\ApiCodes;
 use Closure;
-use Illuminate\Http\Request;
-use App\Traits\APITrait;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use JWTAuth;
+use Exception;
+use Illuminate\Http\Response;
+use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
 class JwtMiddleware
 {
-    use APITrait;
     /**
      * Handle an incoming request.
      *
@@ -23,31 +22,29 @@ class JwtMiddleware
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if (!$user) {
-                $this->success = false;
-                $this->code = ApiCodes::TOKEN_INVALID;
-                $this->data = 'Token is invalid !';
-
-                return $this->json();
+                return response()->json([
+                    'success' => false,
+                    'data' => 'Token is invalid !',
+                ], Response::HTTP_UNAUTHORIZED, [], JSON_PRETTY_PRINT);
             }
 
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-                $this->success = false;
-                $this->code = ApiCodes::TOKEN_INVALID;
-                $this->data = 'Token is invalid !';
+                return response()->json([
+                    'success' => false,
+                    'data' => 'Token is invalid !',
+                ], Response::HTTP_UNAUTHORIZED, [], JSON_PRETTY_PRINT);
 
-                return $this->json();
-
-            } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-                $this->code = ApiCodes::TOKEN_EXPIRED;
-                $this->data = 'Token is expired !';
-                
-                return $this->json();
+            } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {    
+                return response()->json([
+                    'success' => false,
+                    'data' => 'Token is expired !',
+                ], Response::HTTP_UNAUTHORIZED);
             } else {
-                $this->code = ApiCodes::TOKEN_NOT_FOUND;
-                $this->data = 'Token is expired !';
-                
-                return $this->json();
+                return response()->json([
+                    'success' => false,
+                    'data' => 'Token is expired !',
+                ], Response::HTTP_UNAUTHORIZED, [], JSON_PRETTY_PRINT);
             }
         }
 
