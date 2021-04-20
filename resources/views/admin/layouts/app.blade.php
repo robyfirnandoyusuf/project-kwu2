@@ -203,6 +203,21 @@
 <script src="/backend-assets/js/material-dashboard.js"></script>
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script src="/backend-assets/js/demo.js"></script>
+<script src="/backend-assets/js/main.js"></script>
+
+<link rel="stylesheet" href="/backend-assets/fancybox/dist/jquery.fancybox.min.css" />
+<script src="/backend-assets/fancybox/dist/jquery.fancybox.min.js"></script>
+
+@if (\Session::has('notif_error'))
+    <script>
+        notif.showNotification(4,"{!! \Session::get('notif_error') !!}")
+    </script>
+@endif
+@if (\Session::has('notif_success'))
+    <script>
+        notif.showNotification(2,"{!! \Session::get('notif_success') !!}")
+    </script>
+@endif
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
     $.ajaxSetup({

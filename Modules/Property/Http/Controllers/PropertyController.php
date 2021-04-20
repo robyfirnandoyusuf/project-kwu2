@@ -7,18 +7,12 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use Illuminate\Support\Facades\Storage;
-
-use App\Models\Category;
-use App\Models\Facility;
-use App\Models\Image;
+use Session;
+// use App\Models\Image;
 use App\Models\Property;
-use App\Models\Province;
-use App\Models\City;
-use App\Models\PropertyTag;
-use App\Models\Tag;
-use Illuminate\Support\Facades\Http;
-use Psy\CodeCleaner\FunctionReturnInWriteContextPass;
-
+use App\Models\PropertyImage;
+use App\Models\RefProvince;
+use App\Models\RefCity;
 class PropertyController extends Controller
 {
     /**
@@ -28,156 +22,72 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        \Session::forget('dz-sess');
         $data['title'] = 'Listing Property';
-        return view('property::admin.property.index', $data);
+        return view('property::property.index', $data);
     }
 
     public function datatable()
     {
-        $model = Property::with(['user', 'thumbnail', 'category'])
-            ->where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $model = Property::with(['thumbnail', 'refType'])
+                    ->select("properties.*","users.id as user_id", 'users.name as user_name')
+                    ->Join("users", 'users.id', 'properties.user_id');
+            // ->where('user_id', Auth::id())
+            // ->orderBy('created_at', 'desc');
 
-        $dTable = DataTables()->of($model)->addIndexColumn()
+        $dTable = DataTables()->eloquent($model)
+            ->addIndexColumn()
             ->editColumn('title', function ($data) {
                 return $data->title;
             })
             ->editColumn('author', function ($data) {
-                return $data->user->name;
+                return $data->user_name;
             })
             ->editColumn('image', function ($data) {
                 $thumb = 'No Thumbnail';
                 if (!empty($data->thumbnail)) {
-                    $thumb = '<img src="/storage/upload/' . $data->thumbnail->file . '" style="width:60px !important;height:auto !important;">';
+                    $thumb = '<a data-fancybox="gallery" href="/storage/' . $data->thumbnail->sortBy('sequence')->first()->file . '"><img src="/storage/' . $data->thumbnail->sortBy('sequence')->first()->file . '" style="width:60px" class="img_responsive"></a>';
                 }
                 return $thumb;
+                // return print_r($data->thumbnail()->orderBy('sequence')->get());
             })
             ->editColumn('type', function ($data) {
-                return ucfirst($data->category->name);
+                return ucfirst($data->refType->title);
             })
             ->editColumn('price', function ($data) {
-                return "Rp." . number_format($data->price);
+                return "Rp." . number_format($data->basic_price);
             })
-            ->editColumn('date', function ($data) {
-                return $data->new_date;
+            ->editColumn('active_status', function ($data) {
+                $btn = '<a class="btn btn-warning btn-sm">Non Aktif</a>';
+
+                if ($data->active_status == 1) {
+                    $btn = '<a class="btn btn-success btn-sm">Aktif</a>';
+                }
+
+                return $btn;
+            })
+            ->editColumn('last_update', function ($data) {
+                return $data->updated_at->diffForhumans();
             })
             ->addColumn('action', function ($data) {
                 $btn = "";
                 $btn .= '
-                        <a class="btn btn-warning btn-sm" href="' . route('admin.property.edit', $data->id) . '">
+                        <button class="btn btn-warning btn-sm" onclick="getDetail('.$data->id.')" >
                             <i class="fas fa-pencil-alt"> </i>
                             Edit
-                        </a>
-                        <a class="btn btn-danger btn-sm" href="'.route('admin.property.destroy', $data->id).'"  onclick="return confirm(\'Anda yakin akan menghapus item ini ?\');">
+                        </button>
+                        <form method="post" action="'.route('admin.property.destroy', $data->id).'">
+                        '.csrf_field().'
+                        <button type="submit" class="btn btn-danger btn-sm"  onclick="return confirm(\'Anda yakin akan menghapus item ini ?\');">
                             <i class="fas fa-trash"> </i>
                             Delete
-                        </a>';
+                        </button>
+                        </form>
+                        ';
                 return $btn;
             })
-            ->rawColumns(['action', 'image']);
+            ->rawColumns(['action', 'image', 'active_status']);
 
         return $dTable->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $data['title'] = 'Tambah Property';
-        $data['cats'] = Category::all();
-        $data['provs'] = Province::all();
-        if (empty(\Session::get('dz-sess')))
-            \Session::put('dz-sess', str_random(32));
-
-        return view('property::admin.property.create', $data);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            $title = $request->title;
-            $categoryId = $request->type;
-            $tags = explode(",", trim($request->tags));
-            $thumb = $request->thumbnail;
-            $price = $request->price;
-            $squareMeter = $request->square_meter;
-            $desc = $request->desc;
-            $fac = $request->fac;
-            $cityId = $request->city_id;
-            $address = $request->address;
-            $postalCode = $request->postal_code;
-            $buildingAge = $request->building_age;
-            $contactName = $request->contact_name;
-            $contactEmail = $request->contact_email;
-            $contactPhone = $request->contact_phone;
-
-            $property = new Property;
-            $property->user_id = Auth::id();
-            $property->category_id = $categoryId;
-            $property->title = $title;
-            $property->price = $price;
-            $property->desc = $desc;
-            $property->city_id = $cityId;
-            $property->square_meter = $squareMeter;
-            $property->address = $address;
-            $property->postal_code = $postalCode;
-            $property->building_age = $buildingAge;
-            $property->contact_name = $contactName;
-            $property->contact_email = $contactEmail;
-            $property->contact_phone = $contactPhone;
-            $property->save();
-
-            foreach ($tags as $key => $tag) {
-                $tagM = Tag::where('tag', $tag);
-                if ($tagM->count() <= 0) {
-                    $tagId = Tag::insertGetId([
-                        'tag' => $tag
-                    ]);
-                } else {
-                    $tagId = Tag::where('tag', $tag)->first()->id;
-                }
-
-                $propertyTag = new PropertyTag;
-                $propertyTag->tag_id = $tagId;
-                $propertyTag->property_id = $property->id;
-                $propertyTag->save();
-            }
-
-            foreach ($fac as $key => $fac) {
-                $facModel = new Facility;
-                $facModel->property_id = $property->id;
-                $facModel->name = $key;
-                $facModel->value = $fac;
-                $facModel->save();
-            }
-
-            Image::where('sid', \Session::get('dz-sess'))->update([
-                'parent_id' => $property->id,
-                'type' => Image::PROPERTY,
-            ]);
-            Image::where('file', $thumb)->update(['is_thumbnail' => 1]);
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            dd($e->getMessage());
-            return redirect()->route('admin.property.index')->with('error', 'Property gagal dibuat !');
-        }
-
-        \Session::forget('dz-sess');
-        return redirect()->route('admin.property.index')->withSuccess('Property berhasil dibuat !');
     }
 
     /**
@@ -186,149 +96,37 @@ class PropertyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
+    public function destroy(Property $property)
     {
+        $property->delete();
+        return redirect()->back()->with('notif_success', 'Berhasil menghapus property '.$property->title);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $data['title'] = 'Ubah Property';
-        $data['cats'] = Category::all();
-        $data['provs'] = Province::all();
-        $single = Property::with(['category', 'facs', 'city', 'images', 'property_tags.tag'])->whereId($id)->first();
-        $data['single'] = $single;
-        $data['cities'] = City::where('province_id', $single->city->province_id)->get();
-        $tags = $single->property_tags->map(function($d) {
-            return $d->tag->tag;
-        })->toArray();
-        $data['tags'] = implode(",", $tags);
-        
-        $thumb = "";
-        if (empty($single->images)) {
-            \Session::put('dz-sess', str_random(32));
-            $data['dzSess'] = \Session::get('dz-sess');
-        } else {
-            $thumb = $single->images->where('is_thumbnail', 1)->first()->file;
-        }
-        $data['thumb'] = $thumb;
-        
-        return view('property::admin.property.edit', $data);
+    public function edit_popup(Request $request) {
+        $id = $request->id;
+        $property = Property::find($id);
+
+        return view('property::layouts.edit-popup', ["property" => $property]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $title = $request->title;
-            $categoryId = $request->type;
-            $tags = explode(",", trim($request->tags));
-            $thumb = $request->thumbnail;
-            $price = $request->price;
-            $squareMeter = $request->square_meter;
-            $desc = $request->desc;
-            $fac = $request->fac;
-            $cityId = $request->city_id;
-            $address = $request->address;
-            $postalCode = $request->postal_code;
-            $buildingAge = $request->building_age;
-            $contactName = $request->contact_name;
-            $contactEmail = $request->contact_email;
-            $contactPhone = $request->contact_phone;
-
-            $property = Property::find($id);
-            $property->user_id = Auth::id();
-            $property->category_id = $categoryId;
-            $property->title = $title;
-            $property->price = $price;
-            $property->desc = $desc;
-            $property->city_id = $cityId;
-            $property->square_meter = $squareMeter;
-            $property->address = $address;
-            $property->postal_code = $postalCode;
-            $property->building_age = $buildingAge;
-            $property->contact_name = $contactName;
-            $property->contact_email = $contactEmail;
-            $property->contact_phone = $contactPhone;
-            $property->save();
-
-            PropertyTag::where('property_id', $id)->delete();
-            foreach ($tags as $key => $tag) {
-                $tagM = Tag::where('tag', $tag);
-                if ($tagM->count() <= 0) {
-                    $tagId = Tag::insertGetId([
-                        'tag' => $tag
-                    ]);
-                } else {
-                    $tagId = Tag::where('tag', $tag)->first()->id;
-                }
-
-                $propertyTag = new PropertyTag;
-                $propertyTag->tag_id = $tagId;
-                $propertyTag->property_id = $property->id;
-                $propertyTag->save();
-            }
-
-            Facility::where('property_id', $id)->delete();
-            foreach ($fac as $key => $fac) {
-                $facModel = new Facility;
-                $facModel->property_id = $property->id;
-                $facModel->name = $key;
-                $facModel->value = $fac;
-                $facModel->save();
-            }
-
-            if (!empty(\Session::get('dz-sess'))) {
-                Image::where('sid', \Session::get('dz-sess'))->update([
-                    'parent_id' => $property->id,
-                    'type' => Image::PROPERTY
-                ]);
-                Image::where('file', $thumb)->update(['is_thumbnail' => 1]);
-            }
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-            return redirect()->route('admin.property.index')->with('error', 'Property gagal diubah !');
-        }
-
-        \Session::forget('dz-sess');
-        return redirect()->route('admin.property.index')->withSuccess('Property berhasil diubah !');
+    public function update_status(Property $property, Request $request) {
+        $property->active_status = $request->status;
+        $property->save();
+        return redirect()->back()->with('notif_success', 'Berhasil merubah status property '.$property->title);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        try {
-            $imgs = Image::where('parent_id', $id);
-            if ($imgs->count() >= 1) {
-                $imgs = $imgs->pluck('file')->map(function($d){
-                    $d = "upload/".$d;
-                    return $d;
-                })->toArray();
-                $x = Storage::disk('public')->delete($imgs);
-            }
+    public function delete_image(Request $request) {
+        $propertyImage = PropertyImage::find($request->gallery_id);
+        $property = $propertyImage->property;
 
-            Property::destroy($id);
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-            return redirect()->route('admin.property.index')->with('error', 'Property gagal dihapus !');
-        }
+        // dd($propertyImage ,$property, $property->gallery, count($property->gallery));
 
-        return redirect()->route('admin.property.index')->withSuccess('Property berhasil dihapus !');
+        if (count($property->gallery) < 2) {
+            return redirect()->back()->with('notif_error', 'Tidak dapat menghapus image pada '.$property->title. ' karena minimal image = 1');    
+        } 
+
+        $propertyImage->delete();
+
+        return redirect()->back()->with('notif_success', 'Berhasil menghapus image property '.$property->title);
     }
 }

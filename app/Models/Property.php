@@ -4,49 +4,51 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
 class Property extends Model
 {
-    protected $appends = ['new_date'];
+    // protected $appends = ['new_date'];    
     use HasFactory;
+    public static $search = [
+        "title",
+        "desc",
+        "district_id",
+        "postal_code",
+        "address",
+        "lat",
+        "long",
+        "facilities",
+        "poi",
+        "rules",
+        "room_total",
+        "type",
+        "square_meter",
+        "active_status",
+        "basic_price"
+    ];
+    
 
-    public function user()
+    public function createby()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     public function thumbnail()
     {
-        return $this->hasOne(Image::class, 'parent_id', 'id');
+        return $this->belongsToMany(Media::class, PropertyImage::class, 'property_id', 'media_id');
     }
 
-    public function images()
+    public function gallery()
     {
-        return $this->hasMany(Image::class, 'parent_id', 'id');
+        return $this->belongsToMany(Media::class, PropertyImage::class, 'property_id', 'media_id')->withPivot('id');
     }
 
-    public function category()
+    public function district() {
+        return $this->hasOne(RefDistrict::class, 'id', 'district_id');
+    }
+
+    public function refType()
     {
-        return $this->hasOne(Category::class, 'id', 'category_id');
-    }
-
-    public function property_tags()
-    {
-        return $this->hasMany(PropertyTag::class, 'property_id', 'id');
-    }
-
-    public function facs()
-    {
-        return $this->hasMany(Facility::class, 'property_id', 'id');
-    }
-
-    public function city()
-    {
-        return $this->hasOne(City::class, 'id', 'city_id');
-    }
-
-    public function getNewDateAttribute() {
-        return (new Carbon($this->attributes['created_at']))->format('d/m/Y');
+        return $this->hasOne(RefType::class, 'id', 'type');
     }
 }

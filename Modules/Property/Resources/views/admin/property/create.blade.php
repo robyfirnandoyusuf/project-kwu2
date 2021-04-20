@@ -26,29 +26,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Tag</label>
-                                    <div class="col-sm-10">
-                                        <div class="form-group label-floating is-empty">
-                                            <label class="control-label"></label>
-                                            <input type="text" value="" class="tagsinput" data-role="tagsinput" data-color="rose" name="tags"/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Jenis</label>
-                                    <div class="col-lg-5 col-md-6 col-sm-3">
-                                        <select class="selectpicker" data-style="btn btn-primary btn-round"
-                                            title="Single Select" data-size="7" name="type">
-                                            <option disabled selected>Pilih Jenis</option>
-                                            @foreach ($cats as $cat)
-                                                <option value="{{ $cat->id }}">{{ ucfirst($cat->name) }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <label class="col-sm-2 label-on-left">Harga (Rp. )</label>
                                     <div class="col-sm-10">
@@ -132,13 +109,6 @@
                                     </div>
                                 </div>
 
-                                @component('partials.uploader', [
-                                    'title' => 'Drop Images',
-                                    'desc' => '.jpg,.png only',
-                                    'acceptedFiles' => '.jpg,.png',
-                                ])
-                                @endcomponent
-
                                 <div class="row">
                                     <label class="col-sm-2 label-on-left">Thumbnail</label>
                                     <div class="col-sm-5">
@@ -157,76 +127,6 @@
                                     <label class="col-sm-2 label-on-left">Deskripsi</label>
                                     <div class="col-sm-10">
                                         <textarea type="text" class="form-control" rows="10" name="desc"></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Usia Bangunan</label>
-                                    <div class="col-sm-5">
-                                        <div class="form-group label-floating is-empty">
-                                            <label class="control-label"></label>
-                                            <select class="selectpicker" data-style="btn btn-primary btn-round"
-                                            title="Single Select" data-size="7" name="building_age">
-                                                <option disabled selected>Pilih Usia Bangunan</option>
-                                                <option value="0-5 Tahun">0 - 5 Tahun</option>
-                                                <option value="0-10 Tahun">0 - 10 Tahun</option>
-                                                <option value="0-15 Tahun">0 - 15 Tahun</option>
-                                                <option value="0-20 Tahun">0 - 20 Tahun</option>
-                                                <option value="0-25 Tahun">0 - 25 Tahun</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Fasilitas</label>
-                                    <div class="col-sm-4 col-sm-offset-1 checkbox-radios">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="fac[ac]"> AC
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="fac[parking_lot]"> Tempat Parkir
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="fac[swimming_pool]"> Kolam Renang
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="fac[laundry_room]"> Ruang Laundry
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="fac[rest_room]"> Tempat Santai
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr>
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Nama author</label>
-                                    <div class="col-lg-5 col-md-6 col-sm-3">
-                                        <input type="text" class="form-control" placeholder="Nama author" name="contact_name">
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Email yang bisa dihubungi</label>
-                                    <div class="col-lg-5 col-md-6 col-sm-3">
-                                        <input type="email" class="form-control" placeholder="Email yang bisa dihubungi" name="contact_email">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <label class="col-sm-2 label-on-left">Telepon yang bisa dihubungi</label>
-                                    <div class="col-lg-5 col-md-6 col-sm-3">
-                                        <input type="text" class="form-control" placeholder="Telepon yang bisa dihubungi" name="contact_phone">
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-fill btn-rose">Submit</button>

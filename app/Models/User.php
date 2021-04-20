@@ -12,7 +12,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
-    protected $with = ['ref_status', 'image', 'ref_role'];
+    // protected $with = ['ref_status', 'image', 'ref_role'];
     protected $appends = ['created_date'];
 
     const ROLE_ADMIN = 'admin';
@@ -67,6 +67,11 @@ class User extends Authenticatable implements JWTSubject
     public function image()
     {
         return $this->hasOne(Image::class, 'id', 'image_id');
+    }
+
+    public function media()
+    {
+        return $this->hasOne(Media::class, 'id', 'image_id')->where('type', Media::AVATAR);
     }
 
     public function getJWTIdentifier()

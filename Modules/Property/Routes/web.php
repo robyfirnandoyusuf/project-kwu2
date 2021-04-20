@@ -10,32 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-use Modules\Property\Http\Controllers\{
-    PropertyController
-};
 
 Route::group(['middleware' => 'isadmin', 'prefix' => 'admin/property'], function () {
         Route::get('/index', [
             'uses' => 'PropertyController@index',
             'as' => 'admin.property.index'
         ]);
-        Route::get('/create', [
-            'uses' => 'PropertyController@create',
-            'as' => 'admin.property.create'
-        ]);
-        Route::get('/edit/{id}', [
-            'uses' => 'PropertyController@edit',
-            'as' => 'admin.property.edit'
-        ]);
-        Route::post('/store', [
-            'uses' => 'PropertyController@store',
-            'as' => 'admin.property.store'
-        ]);
-        Route::post('/update/{id}', [
-            'uses' => 'PropertyController@update',
-            'as' => 'admin.property.update'
-        ]);
-        Route::get('/destroy/{id}', [
+
+        Route::post('/destroy/{property}', [
             'uses' => 'PropertyController@destroy',
             'as' => 'admin.property.destroy'
         ]);
@@ -44,5 +26,20 @@ Route::group(['middleware' => 'isadmin', 'prefix' => 'admin/property'], function
         Route::get('/dt-property', [
             'uses' => 'PropertyController@datatable',
             'as' => 'admin.dt.property'
+        ]);
+
+        // Edit popup
+        Route::get('/popup/edit', [
+            'uses' => 'PropertyController@edit_popup',
+            'as' => 'admin.popup.property.edit'
+        ]);
+        Route::post('/popup/edit/{property}', [
+            'uses' => 'PropertyController@update_status',
+            'as' => 'admin.popup.property.update'
+        ]);
+
+        Route::post('/popup/delete-image/', [
+            'uses' => 'PropertyController@delete_image',
+            'as' => 'admin.popup.property.delete_image'
         ]);
 });

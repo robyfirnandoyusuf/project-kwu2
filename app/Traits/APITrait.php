@@ -7,6 +7,7 @@ trait APITrait
 
     public $success = true;
     public $data = null;
+    public $message = null;
     public $code = \Illuminate\Http\Response::HTTP_OK;
 
     /**
@@ -18,6 +19,7 @@ trait APITrait
         $result['success'] = $this->success;
         $result['data'] = $this->data;
         $result['code'] = $this->code;
+        $result['message'] = $this->message;
 
         return response()->json($result, $this->code, [], JSON_PRETTY_PRINT);
     }

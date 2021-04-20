@@ -6,5 +6,10 @@
     "Kontol": true,
     "Role": true,
     "Status": true,
-    "Auth": true
+    "Auth": true,
+    "Media": true,
+    "Favorite": true,
+    "City": true,
+    "Province": true,
+    "District": true
 }
