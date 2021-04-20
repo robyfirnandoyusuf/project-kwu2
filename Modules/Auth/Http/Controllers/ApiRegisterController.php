@@ -9,6 +9,7 @@ use App\Traits\APITrait;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Traits\MediaTrait;
 use Modules\Auth\Http\Requests\RegisterRequest;
 use Modules\Media\Http\Controllers\APIMediaController;
@@ -48,7 +49,7 @@ class ApiRegisterController extends Controller
             $user->address = $request->address;
             $user->email = $request->email;
             $user->gender = $request->gender;
-            $user->password = $request->password;
+            $user->password = Hash::make($request->password);
             $user->phone = $request->phone;
             $user->role = $request->role;
             $user->identity = $request->identity;
