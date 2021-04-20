@@ -13,6 +13,16 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
+    Route::group(['prefix' => 'user'], function () {
+        Route::post('post-user', [
+            'uses' => 'ApiUserController@update',
+            'as' => 'api.user.post-user'
+        ]);
+
+        Route::get('get-user', [
+            'uses' => 'ApiUserController@show',
+            'as' => 'api.user.get-user'
+        ]);
+    });
 });

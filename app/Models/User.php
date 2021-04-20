@@ -69,6 +69,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Image::class, 'id', 'image_id');
     }
 
+    public function media()
+    {
+        return $this->hasOne(Media::class, 'id', 'image_id')->where('type', Media::AVATAR);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
