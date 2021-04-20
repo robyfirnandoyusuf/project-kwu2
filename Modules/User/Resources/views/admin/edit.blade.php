@@ -129,7 +129,11 @@
                                         <div class="col-md-3 col-sm-4">
                                             <div class="fileinput fileinput-new text-center" data-provides="fileinput">
                                                 <div class="fileinput-new thumbnail img-circle">
-                                                    <img src="/storage/upload/{{ $single->image->file}}" alt="...">
+                                                    @if (!empty($single->media->file))
+                                                        <img src="/storage/upload/{{ $single->media->file }}" alt="...">
+                                                    @else
+                                                        <img src="/backend-assets/img/placeholder.jpg" alt="...">
+                                                    @endif
                                                 </div>
                                                 <div class="fileinput-preview fileinput-exists thumbnail img-circle"></div>
                                                 <div>

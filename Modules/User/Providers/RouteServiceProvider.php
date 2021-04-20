@@ -24,6 +24,9 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+        Route::bind('user', function($id) {
+            return \App\Models\User::with('media')->findOrFail($id);
+        });
     }
 
     /**
