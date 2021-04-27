@@ -74,7 +74,10 @@ class ApiAuthController extends Controller
 
         $this->success = true;
         $this->code = \Illuminate\Http\Response::HTTP_OK;
-        $this->data = ['token' => $token];
+        $this->data = [
+            'token' => $token,
+            'user' => Auth::user()
+        ];
 
         returnStatement:
         return $this->json();
