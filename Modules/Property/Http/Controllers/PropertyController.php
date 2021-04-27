@@ -111,6 +111,7 @@ class PropertyController extends Controller
 
     public function update_status(Property $property, Request $request) {
         $property->active_status = $request->status;
+        $property->is_featured = $request->is_featured;
         $property->save();
         return redirect()->back()->with('notif_success', 'Berhasil merubah status property '.$property->title);
     }
