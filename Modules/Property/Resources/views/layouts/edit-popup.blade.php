@@ -38,6 +38,21 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <label class="col-sm-4 label-on-left">Is Featured</label>
+                                <div class="col-sm-8 checkbox-radios">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="is_featured" value="1" @if($property->is_featured == 1)checked="true" @endif><span class="circle"></span><span class="check"></span> Yes
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="is_featured" value="0" @if($property->is_featured == 0)checked="true" @endif><span class="circle"></span><span class="check"></span> No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-footer text-right">
                                         <button type="submit" class="btn btn-fill btn-rose">Simpan<div class="ripple-container"></div></button>
@@ -62,7 +77,7 @@
                                         </button>
                                         {{-- TODO: Move to external css --}}
                                         <a data-fancybox="gallery" href="/storage/{{ $gallery->file }}">
-                                            <img src="/storage/{{ $gallery->file }}" class="img-fluid" style="object-fit: cover;width:230px;height:230px;">
+                                            <img src="/storage/{{ $gallery->file }}" class="img-responsive" style="object-fit: cover;width:230px;height:230px;">
                                         </a>
                                     </div>
                                     </form>
