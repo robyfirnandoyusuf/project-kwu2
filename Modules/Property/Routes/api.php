@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(['prefix'=>'v1', 'middleware' => ['jwt.verify']], function () {
+Route::group(['prefix'=>'v1'], function () {
     Route::group(['middleware' => ['jwt.verify']], function() {
         Route::group(['prefix' => 'mitra/property'], function () {
             Route::get('/', [
