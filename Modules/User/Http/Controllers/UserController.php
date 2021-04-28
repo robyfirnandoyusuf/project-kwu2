@@ -155,19 +155,21 @@ class UserController extends Controller
             $user->gender = $request->gender;
             $user->address = $request->address;
             $user->save();
-            if ($file = $request->avatar->store('/upload', 'public')) {
-                $cols = [
-                    'user_id' => $user->id,
-                    'file' => str_replace('upload/', '', $file),
-                    'type' => Media::AVATAR
-                ];
+            if ($request->hasFile('avatar')) {
+                if ($file = $request->avatar->store('/upload', 'public')) {
+                    $cols = [
+                        'user_id' => $user->id,
+                        'file' => str_replace('upload/', '', $file),
+                        'type' => Media::AVATAR
+                    ];
 
-                $this->_clearMedia($user->id);
-                $image_id = Media::insertGetId($cols);
-                
-                $user = User::find($user->id);
-                $user->image_id = $image_id;
-                $user->save();
+                    $this->_clearMedia($user->id);
+                    $image_id = Media::insertGetId($cols);
+                    
+                    $user = User::find($user->id);
+                    $user->image_id = $image_id;
+                    $user->save();
+                }
             }
         } catch (\Exception $e) {
             return redirect()->route('admin.user.index', ['type' => $type])->with('error_msg', 'Data gagal ditambah !');
