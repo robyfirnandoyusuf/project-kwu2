@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Rent;
 use App\Models\Payment;
 use App\Models\Property;
+use App\Models\RefRole;
 use App\Models\RefStatus;
 
 class ApiRentController extends Controller
@@ -29,11 +30,11 @@ class ApiRentController extends Controller
      */
     public function index(Request $request)
     {
-        $type = $request->type;
+        $type = Auth::user()->role;
         $rent = Rent::with(['property']);
 
         switch ($type) {
-            case 'mitra': //get list rent by mitra
+            case RefRole::REF_MITRA: //get list rent by mitra
                 $rent = $rent->whereHas('property', function ($q) {
                     $q->where('user_id', Auth::id());
                 })->get();

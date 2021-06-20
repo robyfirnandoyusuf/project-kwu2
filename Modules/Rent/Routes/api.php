@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
     Route::group(['prefix' => 'rent'], function () {
-        Route::post('get-rent', [
+        Route::get('get-rent', [
             'uses' => 'ApiRentController@index',
             'as' => 'api.rent.get-rent'
         ]);
