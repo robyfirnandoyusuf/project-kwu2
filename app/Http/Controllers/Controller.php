@@ -50,8 +50,20 @@ class Controller extends BaseController
 
     /**
      * Show the specified resource.
-     * @param Property $property
-     * @return Renderable
+     * 
+     *  $params = [
+     *       'transaction_details' => [
+     *          'order_id' => rand(),
+     *          'gross_amount' => 10000,
+     *      ],
+     *       'customer_details' => [
+     *          'first_name' => 'budi',
+     *         'last_name' => 'pratama',
+     *        'email' => 'budi.pra@example.com',
+     *       'phone' => '08111222333',
+     *  ],
+     *];
+     * @return Array
      */
     public function getMidtrans($params) {
         // Set your Merchant Server Key
