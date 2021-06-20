@@ -80,25 +80,29 @@ class ApiUserController extends Controller
         $userId = Auth::id();
         try {
             $user = User::find($userId);
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->address = $request->address;
-            $user->gender = $request->gender;
-            $user->identity = $request->identity;
-            
-            if ($request->hasFile('avatar')) {
-                if ($file = $request->avatar->store('/upload', 'public')) {
-                    $cols = [
-                        'user_id' => Auth::id(),
-                        'file' => str_replace('upload/', '', $file),
-                        'type' => Media::AVATAR
-                    ];
-
-                    $this->_clearMedia();
-                    $image_id = Media::insertGetId($cols);
-                    $user->image_id = $image_id;
+            if (!$request->has('password')) {
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone = $request->phone;
+                $user->address = $request->address;
+                $user->gender = $request->gender;
+                $user->identity = $request->identity;
+                
+                if ($request->hasFile('avatar')) {
+                    if ($file = $request->avatar->store('/upload', 'public')) {
+                        $cols = [
+                            'user_id' => Auth::id(),
+                            'file' => str_replace('upload/', '', $file),
+                            'type' => Media::AVATAR
+                        ];
+    
+                        $this->_clearMedia();
+                        $image_id = Media::insertGetId($cols);
+                        $user->image_id = $image_id;
+                    }
                 }
+            } else {
+                $user->password = \Hash::make($request->password);
             }
 
             $user->save();

@@ -24,5 +24,10 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'uses' => 'ApiUserController@show',
             'as' => 'api.user.get-user'
         ]);
+
+        Route::put('{user}', [
+            'uses' => 'ApiUserController@update',
+            'as' => 'api.user.get-user'
+        ]);
     });
 });
