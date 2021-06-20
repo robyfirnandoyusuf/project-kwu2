@@ -57,7 +57,7 @@ class PaymentController extends Controller
             Log::channel('stderr')->debug("Payment using " . $type . " for transaction order_id: " . $order_id . " is canceled.");
         }
 
-        $payment = Payment::find($order_id);
+        $payment = Payment::where('code', $order_id)->first();
         $payment->status = $refStatus;
         $payment->payment_response = json_encode((array)$notif);
         $payment->save();
