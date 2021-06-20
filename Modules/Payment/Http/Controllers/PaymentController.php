@@ -58,7 +58,7 @@ class PaymentController extends Controller
         }
 
         $payment = Payment::where('code', $order_id)->first();
-        $payment->status = $refStatus;
+        $payment->status_payment = $refStatus;
         $payment->payment_response = json_encode((array)$notif);
         $payment->save();
     }
