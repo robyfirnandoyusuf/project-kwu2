@@ -18,6 +18,7 @@ class PropertyResource extends JsonResource
         $district = $this->district;
         $city = $district->city;
         $province = $city->province;
+        $owner = $this->createby;
 
         $data = [
             'id'            => $this->id,
@@ -48,6 +49,9 @@ class PropertyResource extends JsonResource
             "active_status" => $this->active_status,
             "basic_price"   => $this->basic_price,
             "property_images" => MediaResource::collection($this->gallery()->get(['file', 'media.id'])),
+            "owner" => [
+                "name" => $owner->name,
+            ]
         ];
 
         // return parent::toArray($request);
