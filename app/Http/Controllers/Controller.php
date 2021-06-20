@@ -47,4 +47,36 @@ class Controller extends BaseController
         }
         return false;
     }
+
+    /**
+     * Show the specified resource.
+     * 
+     *  $params = [
+     *       'transaction_details' => [
+     *          'order_id' => rand(),
+     *          'gross_amount' => 10000,
+     *      ],
+     *       'customer_details' => [
+     *          'first_name' => 'budi',
+     *         'last_name' => 'pratama',
+     *        'email' => 'budi.pra@example.com',
+     *       'phone' => '08111222333',
+     *  ],
+     *];
+     * @return Array
+     */
+    public function getMidtrans($params) {
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = (bool)env('MIDTRANS_PRODUCTION');
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = (bool)env('MIDTRANS_SANITIZED');
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = (bool)env('MIDTRANS_3DS');
+        
+        $snapToken = \Midtrans\Snap::createTransaction($params);
+
+        return $snapToken;
+    }
 }
