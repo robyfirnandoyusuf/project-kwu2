@@ -13,6 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/payment', function (Request $request) {
-    return $request->user();
+Route::group(['prefix'=>'v1', 'middleware' => ['api']], function () {
+    Route::group(['prefix' => 'payment'], function () {
+        Route::post('webhook', [
+            'uses' => 'PaymentController@webhook',
+            'as' => 'api.payment.webhook'
+        ]);
+    });
 });
