@@ -31,7 +31,7 @@ class ApiRentController extends Controller
     public function index(Request $request)
     {
         $type = Auth::user()->role;
-        $rent = Rent::with(['property']);
+        $rent = Rent::with(['property.gallery']);
 
         switch ($type) {
             case RefRole::REF_MITRA: //get list rent by mitra
@@ -41,7 +41,7 @@ class ApiRentController extends Controller
                 break;
             
             default://get list rent by user
-                $rent = $rent->with(['property'])->where('user_id', Auth::id())->get();
+                $rent = $rent->with(['property.gallery'])->where('user_id', Auth::id())->get();
                 break;
         }
 
