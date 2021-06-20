@@ -19,7 +19,7 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'uses' => 'ApiRentController@index',
             'as' => 'api.rent.get-rent'
         ]);
-        Route::post('store-rent', [
+        Route::post('store-rent/{property}', [
             'uses' => 'ApiRentController@store',
             'as' => 'api.rent.post-rent'
         ]);

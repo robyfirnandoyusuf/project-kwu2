@@ -88,35 +88,41 @@ class UserRequest extends FormRequest
                 }
                 break;
             case str_contains($uri, "/user/post-user"):
-                $rules = [
-                    'name' => [
-                        'required'
-                    ],
-                    'email' => [
-                        'sometimes', 
-                        'required', 
-                        'unique:users,email,' . $this->input('email')
-                    ],
-                    'gender' => [
-                        'required'
-                    ],
-                    'phone' => [
-                        'required'
-                    ],
-                    'identity' => [
-                        'required'
-                    ],
-                    'address' => [
-                        'required'
-                    ],
-                ];
+                if (empty($this->has('password'))) {
+                    $rules = [
+                        'name' => [
+                            'required'
+                        ],
+                        'email' => [
+                            'sometimes', 
+                            'required', 
+                            'unique:users,email,' . $this->input('email')
+                        ],
+                        'gender' => [
+                            'required'
+                        ],
+                        'phone' => [
+                            'required'
+                        ],
+                        'identity' => [
+                            'required'
+                        ],
+                        'address' => [
+                            'required'
+                        ],
+                    ];
 
-                if (!empty($this->avatar)) {
-                    $rules['avatar'] = [
-                        'sometimes',
-                        'image',
-                        'mimes:jpeg,png,jpg',
-                        'max:5000'
+                    if (!empty($this->avatar)) {
+                        $rules['avatar'] = [
+                            'sometimes',
+                            'image',
+                            'mimes:jpeg,png,jpg',
+                            'max:5000'
+                        ];
+                    }
+                } else {
+                    $rules = [
+                        'password' => 'required|confirmed|min:5',
                     ];
                 }
                 break;

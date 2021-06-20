@@ -320,4 +320,26 @@ class APIPropertyController extends Controller
 
         return $this->json();
     }
+
+    public function test_midtrans(Request $request) {
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => rand(),
+                'gross_amount' => 10000,
+            ],
+            'customer_details' => [
+                'first_name' => 'budi',
+                'last_name' => 'pratama',
+                'email' => 'budi.pra@example.com',
+                'phone' => '08111222333',
+            ],
+        ];
+
+        // dd(Auth::user()->name);
+
+        dd($this->getMidtrans($params));
+
+        return $this->json();
+    }
 }

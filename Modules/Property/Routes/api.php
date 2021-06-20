@@ -15,6 +15,12 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix'=>'v1'], function () {
     Route::group(['middleware' => ['jwt.verify']], function() {
+
+        Route::get('/test-midtrans', [
+            'uses' => 'APIPropertyController@test_midtrans',
+            'as' => 'api.property.test-midtrans'
+        ]);
+
         Route::group(['prefix' => 'mitra/property'], function () {
             Route::get('/', [
                 'uses' => 'APIPropertyController@index',

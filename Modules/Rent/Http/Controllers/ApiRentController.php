@@ -2,20 +2,23 @@
 
 namespace Modules\Rent\Http\Controllers;
 
-use App\Models\RefStatus;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 use Modules\Rent\Http\Requests\RentRequest;
 use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use \Illuminate\Http\Response;
 use Auth;
+use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Rent;
+use App\Models\Payment;
+use App\Models\Property;
+use App\Models\RefStatus;
 
 class ApiRentController extends Controller
 {
@@ -49,41 +52,89 @@ class ApiRentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('rent::create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      * @param Request $request
      * @return Renderable
      * note : harus perbaiki dulu module property untuk menggunakan rentrequest ?! err missing Fac model
      */
-    public function store(Request $request)
+    public function store(Property $property, Request $request)
     {
         $validate = $this->validateRent($request);
-        if (!empty($validate))
+        if (!empty($validate)) {
             return $validate;
+        }
         
+        $user = Auth::user();
+        // $responseMidtrans = [];
+        
+        DB::beginTransaction();
         try {
+
+            $payment = new Payment;
+            $payment->code = "P".date("ymdHis").$property->id.$user->id;
+            $payment->amount = $property->basic_price;
+
+            // Dynamic
+            $payment->admin_cost = $property->basic_price * 10/100;
+            $payment->name = "Sewa Kos ". $property->title;
+            $payment->status_payment = RefStatus::STATUS_WAITING;
+            
+            // Call Midtrans
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $payment->code,
+                    'gross_amount' => $property->basic_price + $payment->admin_cost,
+                ],
+                "item_details" => [
+                    [
+                      "id" => "a01",
+                      "price" => $property->basic_price,
+                      "quantity" => 1,
+                      "name" => $payment->name
+                    ],
+                    [
+                      "id" => "b02",
+                      "price" => $payment->admin_cost,
+                      "quantity" => 1,
+                      "name" => "Biaya Admin"
+                    ]
+                ],
+                'customer_details' => [
+                    'first_name' => $user->name,
+                    'last_name' => '',
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                ]
+            ];
+            $responseMidtrans = $this->getMidtrans($params);
+            $payment->snap_token = $responseMidtrans->token;
+            $payment->save();
+
             $rent = new Rent;
-            $rent->property_id = $request->property_id;
-            $rent->user_id = Auth::id();
-            $rent->active_status = RefStatus::status(RefStatus::PENDING)->ref;
-            $rent->enter_date = Carbon::createFromFormat('d/m/Y', $request->enter_date)->toDateTimeString();
+            $rent->property_id = $property->id;
+            $rent->user_id = $user->id;
+            $rent->payment_id = $payment->id;
+            $rent->active_status = RefStatus::STATUS_NON_ACTIVE;
+            $rent->enter_date = $request->enter_date;
             $rent->save();
+
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollback();
             $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
             $this->success = false;
             $this->data = $e->getMessage();
+            return $this->json();
         }
 
         $this->code = Response::HTTP_OK;
         $this->success = true;
+        $this->data = [
+            "payment_code" => $payment->code,
+            "payment_link" => $responseMidtrans->redirect_url,
+            "payment_id" => $responseMidtrans->token,
+        ];
+
         return $this->json();
     }
 
@@ -162,17 +213,17 @@ class ApiRentController extends Controller
         switch (true) {
             case str_contains($uri, "/rent/store"):
                 $rules = [
-                    'property_id' => [
-                        'required',
-                        Rule::exists('properties', 'id'),
-                        Rule::unique('rents')->where(function ($query) use($request) {
-                            return $query->where('property_id', $request->property_id)
-                                ->where('user_id', Auth::id());
-                        }),
-                    ],
+                    // 'property_id' => [
+                    //     'required',
+                    //     Rule::exists('properties', 'id'),
+                    //     Rule::unique('rents')->where(function ($query) use($request) {
+                    //         return $query->where('property_id', $request->property_id)
+                    //             ->where('user_id', Auth::id());
+                    //     }),
+                    // ],
                     'enter_date' => [
                         'required',
-                        'date_format:d/m/Y'
+                        'date_format:Y-m-d'
                     ],
                 ];
                 break;

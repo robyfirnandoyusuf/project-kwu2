@@ -16,14 +16,13 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->bigInteger('rent_id')->unsigned();
-            $table->bigInteger('payment_method_id')->unsigned();
+            $table->text('payment_response')->nullable();
             $table->string('amount');
             $table->string('admin_cost');
             $table->string('name');
             $table->string('status_payment');
             $table->string('snap_token');
-            $table->dateTime('paid_at');
+            $table->dateTime('paid_at')->nullable();
             $table->timestamps();
         });
     }

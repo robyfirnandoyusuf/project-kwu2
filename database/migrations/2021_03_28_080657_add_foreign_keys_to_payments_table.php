@@ -14,8 +14,7 @@ class AddForeignKeysToPaymentsTable extends Migration
     public function up()
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->foreign('rent_id', 'payments_ibfk_1')->references('id')->on('rents')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign('payment_method_id', 'payments_ibfk_2')->references('id')->on('ref_payment_methods')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            // $table->foreign('payment_method_id', 'payments_ibfk_1')->references('id')->on('ref_payment_methods')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 
@@ -27,8 +26,7 @@ class AddForeignKeysToPaymentsTable extends Migration
     public function down()
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropForeign('payments_ibfk_1');
-            $table->dropForeign('payments_ibfk_2');
+            // $table->dropForeign('payments_ibfk_1');
         });
     }
 }
