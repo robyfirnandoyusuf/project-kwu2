@@ -18,6 +18,23 @@ class RefStatus extends Model
     const STATUS_ACCEPT = 12;
     const STATUS_CANCEL = 7;
 
+    const STATUS_PAYMENT = [
+        'active' => 1,
+        'non-active' => 2,
+        'pending' => 3,
+        'capture' => 4,
+        'settlement' => 5,
+        'deny' => 6,
+        'cancel' => 7 ,
+        'failure' => 8,
+        'refund' => 9,
+        'chargeback' => 10,
+        'waiting' => 11,
+        'accept' => 12,
+        'delete' => 13,
+        'expire' => 14
+    ];
+
     use HasFactory;
     protected $table = 'ref_status';
 

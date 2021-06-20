@@ -71,6 +71,10 @@ class StatusSeeder extends Seeder
                 'ref' => 13,
                 'title' => 'delete'
             ],
+            [
+                'ref' => 14,
+                'title' => 'expire'
+            ],
         ];
 
         RefStatus::insert($data);
