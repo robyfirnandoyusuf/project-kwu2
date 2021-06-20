@@ -32,6 +32,7 @@ class APIPropertyController extends Controller
     public function index(Request $request)
     {
         $q = $request->q;
+        $basicPrices = $request->basic_prices; //array
         $per_page = 10;
 
         if ($request->per_page) {
@@ -43,6 +44,9 @@ class APIPropertyController extends Controller
         if($q != "" ) {
             $properties = $properties->whereLike(Property::$search, $q);
         }
+
+        if (!empty($basicPrices))
+            $properties = $properties->whereBetween('basic_price', $basicPrices);
 
         $properties = $properties->paginate($per_page);
 
