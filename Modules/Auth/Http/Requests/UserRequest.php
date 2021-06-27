@@ -54,31 +54,34 @@ class UserRequest extends FormRequest
                 ];
                 break;
             case str_contains($uri, "/auth/update"):
-                $rules = [
-                    'name' => [
-                        'required'
-                    ],
-                    'email' => [
-                        'sometimes', 
-                        'required', 
-                        // 'unique:users,email,' . $user->id
-                    ],
-                    'gender' => [
-                        'required'
-                    ],
-                    'phone' => [
-                        'required'
-                    ],
-                    'identity' => [
-                        'required'
-                    ],
-                    'active_status' => [
-                        'required'
-                    ],
-                    'address' => [
-                        'required'
-                    ],
-                ];
+                if (!$this->has('password')) {
+                    $rules = [
+                        'name' => [
+                            'required'
+                        ],
+                        'email' => [
+                            'sometimes', 
+                            'required', 
+                            'unique:users,email,' . $user->id
+                        ],
+                        'gender' => [
+                            'required'
+                        ],
+                        'phone' => [
+                            'required'
+                        ],
+                        'identity' => [
+                            'required'
+                        ],
+                        'address' => [
+                            'required'
+                        ],
+                    ];
+                } else {
+                    $rules = [
+                        'password' => 'required|confirmed|min:5',
+                    ];
+                }
 
                 if (!empty($this->avatar)) {
                     $rules['avatar'] = [
