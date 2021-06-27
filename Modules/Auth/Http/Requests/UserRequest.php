@@ -79,7 +79,7 @@ class UserRequest extends FormRequest
                     ];
                 } else {
                     $rules = [
-                        'password' => 'required|confirmed|min:5',
+                        'password' => 'required|confirmed|min:3',
                     ];
                 }
 
