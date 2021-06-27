@@ -17,7 +17,17 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
     Route::group(['prefix' => 'favorite'], function () {
         Route::get('get-favorite', [
             'uses' => 'ApiFavoriteController@index',
-            'as' => 'api.auth.post-auth'
+            'as' => 'api.favorite.get-favorite'
+        ]);
+
+        Route::post('store-favorite', [
+            'uses' => 'ApiFavoriteController@store',
+            'as' => 'api.favorite.post-favorite'
+        ]);
+
+        Route::delete('/{favorite}', [
+            'uses' => 'ApiFavoriteController@destroy',
+            'as' => 'api.favorite.destroy'
         ]);
     });
 });
