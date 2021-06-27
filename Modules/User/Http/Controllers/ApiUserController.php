@@ -69,64 +69,7 @@ class ApiUserController extends Controller
         return view('user::edit');
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
-    public function update(UserRequest $request)
-    {
-        $userId = Auth::id();
-        try {
-            $user = User::find($userId);
-            if (!$request->has('password')) {
-                $user->name = $request->name;
-                $user->email = $request->email;
-                $user->phone = $request->phone;
-                $user->address = $request->address;
-                $user->gender = $request->gender;
-                $user->identity = $request->identity;
-                
-                if ($request->hasFile('avatar')) {
-                    if ($file = $request->avatar->store('/upload', 'public')) {
-                        $cols = [
-                            'user_id' => Auth::id(),
-                            'file' => str_replace('upload/', '', $file),
-                            'type' => Media::AVATAR
-                        ];
-    
-                        $this->_clearMedia();
-                        $image_id = Media::insertGetId($cols);
-                        $user->image_id = $image_id;
-                    }
-                }
-            } else {
-                $user->password = \Hash::make($request->password);
-            }
-
-            $user->save();
-            $this->success = true;
-            $this->code = Response::HTTP_OK;
-        } catch (\Exception $e) {
-            $this->success = false;
-            $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
-        }
-        
-        return $this->json();
-    }
-
-    private function _clearMedia() {
-        $mediaModel = Media::where(['user_id' => Auth::id(), 'type' => Media::AVATAR]);
-        $media = clone $mediaModel;
-
-        $file = $media->pluck('file');
-        foreach ($file as $key => $value) {
-            Storage::disk('public')->delete('upload/'.$value);
-        }
-
-        return $media->delete();
-    }
+  
 
     /**
      * Remove the specified resource from storage.

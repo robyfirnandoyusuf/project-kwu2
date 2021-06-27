@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use URL;
+
+use App\Models\Media;
+use App\Models\User;
 
 class ApiAuthController extends Controller
 {
@@ -74,9 +78,14 @@ class ApiAuthController extends Controller
 
         $this->success = true;
         $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $user = User::with('media:id,file')->whereId(Auth::id())->first();
+        if ($user->media) {
+            $user->media->file = URL::to('/storage/'.$user->media->file);
+        }
+
         $this->data = [
             'token' => $token,
-            'user' => Auth::user()
+            'user' => $user
         ];
 
         returnStatement:
@@ -88,29 +97,76 @@ class ApiAuthController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function edit($id)
+    public function get_user_logged()
     {
-        return view('auth::edit');
+        $user = User::with('media:id,file')->whereId(Auth::id())->first();
+        if ($user->media) {
+            $user->media->file = URL::to('/storage/'.$user->media->file);
+        }
+        
+        $this->success = true;
+        $this->code = \Illuminate\Http\Response::HTTP_OK;
+        $this->data = $user;
+
+        return $this->json();
     }
 
-    /**
+      /**
      * Update the specified resource in storage.
      * @param Request $request
      * @param int $id
      * @return Renderable
      */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request)
     {
-        //
+        $userId = Auth::id();
+        try {
+            $user = User::find($userId);
+            if (!$request->has('password')) {
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone = $request->phone;
+                $user->address = $request->address;
+                $user->gender = $request->gender;
+                $user->identity = $request->identity;
+                
+                if ($request->hasFile('avatar')) {
+                    if ($file = $request->avatar->store('/upload', 'public')) {
+                        $cols = [
+                            'user_id' => Auth::id(),
+                            'file' => str_replace('upload/', '', $file),
+                            'type' => Media::AVATAR
+                        ];
+    
+                        $this->_clearMedia();
+                        $image_id = Media::insertGetId($cols);
+                        $user->image_id = $image_id;
+                    }
+                }
+            } else {
+                $user->password = \Hash::make($request->password);
+            }
+
+            $user->save();
+            $this->success = true;
+            $this->code = Response::HTTP_OK;
+        } catch (\Exception $e) {
+            $this->success = false;
+            $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+        
+        return $this->json();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
+    private function _clearMedia() {
+        $mediaModel = Media::where(['user_id' => Auth::id(), 'type' => Media::AVATAR]);
+        $media = clone $mediaModel;
+
+        $file = $media->pluck('file');
+        foreach ($file as $key => $value) {
+            Storage::disk('public')->delete('upload/'.$value);
+        }
+
+        return $media->delete();
     }
 }

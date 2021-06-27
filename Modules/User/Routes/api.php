@@ -15,19 +15,6 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
     Route::group(['prefix' => 'user'], function () {
-        Route::post('post-user', [
-            'uses' => 'ApiUserController@update',
-            'as' => 'api.user.post-user'
-        ]);
-
-        Route::get('get-user', [
-            'uses' => 'ApiUserController@show',
-            'as' => 'api.user.get-user'
-        ]);
-
-        Route::put('{user}', [
-            'uses' => 'ApiUserController@update',
-            'as' => 'api.user.get-user'
-        ]);
+        
     });
 });

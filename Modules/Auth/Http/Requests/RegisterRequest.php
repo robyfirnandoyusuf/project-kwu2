@@ -39,7 +39,7 @@ class RegisterRequest extends FormRequest
                     ],
                     'password' => ['required'],
                     'phone' => ['required'],
-                    'image' => ['mimes:jpeg,jpg,png,gif,jfif|required|max:10000', 'required'],
+                    'image' => ['mimes:jpeg,jpg,png,gif,jfif|max:10000'],
                     'identity' => ['required']
                 ];
                 break;

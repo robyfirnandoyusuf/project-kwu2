@@ -56,11 +56,13 @@ class ApiRegisterController extends Controller
             $user->active_status = RefStatus::status('active')->ref;
             $user->save();
             
-            $media = $this->uploadMedia($image, Media::AVATAR, $user->id);
-            if ($media) {
-                $user->find($user->id);
-                $user->image_id = $media;
-                $user->save();
+            if ($image) {
+                $media = $this->uploadMedia($image, Media::AVATAR, $user->id);
+                if ($media) {
+                    $user->find($user->id);
+                    $user->image_id = $media;
+                    $user->save();
+                }
             }
 
             $this->success = true;

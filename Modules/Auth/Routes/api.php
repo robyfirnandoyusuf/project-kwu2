@@ -21,6 +21,17 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api']], function () {
             'uses' => 'ApiAuthController@show',
             'as' => 'api.auth.post-auth'
         ]);
+
+        Route::group(['middleware' => 'jwt.verify'], function() {
+            Route::get('me', [
+                'uses' => 'ApiAuthController@get_user_logged',
+                'as' => 'api.auth.get-auth'
+            ]);
+            Route::post('update', [
+                'uses' => 'ApiAuthController@update',
+                'as' => 'api.user.post-user'
+            ]);
+        });
     });
 
     Route::group(['prefix' => 'register'], function () {
