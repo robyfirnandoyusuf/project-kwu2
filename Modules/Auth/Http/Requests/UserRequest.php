@@ -1,8 +1,9 @@
 <?php
 
-namespace Modules\User\Http\Requests;
+namespace Modules\Auth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Auth;
 
 class UserRequest extends FormRequest
 {
@@ -13,6 +14,7 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
+        $user = Auth::user();
         $rules = [];
         $uri = $this->route()->uri;
         switch (true) {
@@ -51,7 +53,7 @@ class UserRequest extends FormRequest
                     ],
                 ];
                 break;
-            case str_contains($uri, "/user/update"):
+            case str_contains($uri, "/auth/update"):
                 $rules = [
                     'name' => [
                         'required'
@@ -59,7 +61,7 @@ class UserRequest extends FormRequest
                     'email' => [
                         'sometimes', 
                         'required', 
-                        'unique:users,email,' . $this->user->id
+                        // 'unique:users,email,' . $user->id
                     ],
                     'gender' => [
                         'required'

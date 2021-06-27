@@ -44,7 +44,7 @@ class PropertyController extends Controller
             })
             ->editColumn('image', function ($data) {
                 $thumb = 'No Thumbnail';
-                if (!empty($data->thumbnail)) {
+                if (!empty($data->thumbnail->sortBy('sequence')->first()->file)) {
                     $thumb = '<a data-fancybox="gallery" href="/storage/' . $data->thumbnail->sortBy('sequence')->first()->file . '"><img src="/storage/' . $data->thumbnail->sortBy('sequence')->first()->file . '" style="width:60px" class="img_responsive"></a>';
                 }
                 return $thumb;

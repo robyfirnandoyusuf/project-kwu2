@@ -10,6 +10,8 @@ use App\Traits\APITrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use URL;
 
+use Modules\Auth\Http\Requests\UserRequest;
+
 use App\Models\Media;
 use App\Models\User;
 
@@ -117,7 +119,7 @@ class ApiAuthController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function update(UserRequest $request)
+    public function update(Request $request)
     {
         $userId = Auth::id();
         try {
