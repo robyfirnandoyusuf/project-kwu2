@@ -3,6 +3,7 @@
 namespace Modules\Favorite\Http\Controllers;
 
 use App\Models\Favorite;
+use App\Models\Property;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -105,12 +106,13 @@ class ApiFavoriteController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy(Favorite $favorite)
+    public function destroy(Property $property)
     {
         try {
             $this->status = true;
             $this->code = \Illuminate\Http\Response::HTTP_OK;
-            $favorite->delete();
+            Favorite::where(['property_id' => $property->id, 'user_id' => \Auth::id()])->delete();
+            // $favorite->delete();
         } catch (\Exception $e) {
             $this->status = false;
             $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;

@@ -25,7 +25,7 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function (
             'as' => 'api.favorite.post-favorite'
         ]);
 
-        Route::delete('/{favorite}', [
+        Route::delete('/{property}', [
             'uses' => 'ApiFavoriteController@destroy',
             'as' => 'api.favorite.destroy'
         ]);
