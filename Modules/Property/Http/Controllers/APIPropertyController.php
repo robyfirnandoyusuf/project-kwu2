@@ -277,7 +277,8 @@ class APIPropertyController extends Controller
         }
 
         $properties = Property::with(['district', 'district.city'])
-            ->where('active_status', 1);
+            ->where('active_status', 1)
+            ->select('properties.*', \DB::raw('room_total  - (SELECT count(*) FROM rents WHERE property_id = properties.id AND active_status != 13) as sisa_kamar'));
 
         if ($request->city_id != 0) {
             $properties = $properties->whereHas('district.city', function($q) use ($request) {
@@ -297,6 +298,11 @@ class APIPropertyController extends Controller
             $properties = $properties->whereLike(Property::$search, $q);
         }
 
+        if (!empty($request->order_by) && !empty($request->sort)) {
+            $properties = $properties->orderBy($request->order_by, $request->sort);
+        }
+        $properties = $properties->having('sisa_kamar', '>', 0);
+        // $properties = $properties->dd();
         $properties = $properties->paginate($per_page);
 
         $this->success = true;

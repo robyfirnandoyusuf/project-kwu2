@@ -15,9 +15,13 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix'=>'v1', 'middleware' => ['api', 'jwt.verify']], function () {
     Route::group(['prefix' => 'rent'], function () {
-        Route::get('get-rent', [
-            'uses' => 'ApiRentController@index',
-            'as' => 'api.rent.get-rent'
+        Route::get('get-rent-user', [
+            'uses' => 'ApiRentController@userRent',
+            'as' => 'api.rent.get-rent-user'
+        ]);
+        Route::get('get-rent-mitra', [
+            'uses' => 'ApiRentController@mitraRent',
+            'as' => 'api.rent.get-rent-user'
         ]);
         Route::post('store-rent/{property}', [
             'uses' => 'ApiRentController@store',

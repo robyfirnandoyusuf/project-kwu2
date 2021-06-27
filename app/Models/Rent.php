@@ -13,4 +13,14 @@ class Rent extends Model
     {
         return $this->hasMany(Property::class, 'id', 'property_id');
     }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'id', 'payment_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }

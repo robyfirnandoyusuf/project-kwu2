@@ -29,10 +29,10 @@ class PropertyController extends Controller
     public function datatable()
     {
         $model = Property::with(['thumbnail', 'refType'])
-                    ->select("properties.*","users.id as user_id", 'users.name as user_name')
-                    ->Join("users", 'users.id', 'properties.user_id');
+                    ->select("properties.*","users.id as users_id", 'users.name as user_name')
+                    ->Join("users", 'users.id', 'properties.user_id')
             // ->where('user_id', Auth::id())
-            // ->orderBy('created_at', 'desc');
+                    ->orderBy('created_at', 'desc');
 
         $dTable = DataTables()->eloquent($model)
             ->addIndexColumn()
@@ -66,7 +66,7 @@ class PropertyController extends Controller
                 return $btn;
             })
             ->editColumn('last_update', function ($data) {
-                return $data->updated_at->diffForhumans();
+                return $data->updated_at ? $data->updated_at->diffForhumans() : "-";
             })
             ->addColumn('action', function ($data) {
                 $btn = "";

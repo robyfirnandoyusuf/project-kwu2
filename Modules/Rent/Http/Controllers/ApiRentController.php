@@ -28,22 +28,23 @@ class ApiRentController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index(Request $request)
+    public function userRent(Request $request)
     {
-        $type = Auth::user()->role;
-        $rent = Rent::with(['property.gallery']);
+        // $type = Auth::user()->role;
+        $rent = Rent::with(['property.gallery', 'payment.refStatus'])->where('user_id', Auth::id())->get();
 
-        switch ($type) {
-            case RefRole::REF_MITRA: //get list rent by mitra
-                $rent = $rent->whereHas('property', function ($q) {
-                    $q->where('user_id', Auth::id());
-                })->get();
-                break;
-            
-            default://get list rent by user
-                $rent = $rent->with(['property.gallery'])->where('user_id', Auth::id())->get();
-                break;
-        }
+        $this->success = true;
+        $this->code = Response::HTTP_OK;
+        $this->data = $rent;
+        
+        return $this->json();
+    }
+
+    public function mitraRent(Request $request)
+    {
+        $rent = Rent::with(['property.gallery', 'payment.refStatus', 'user'])->whereHas('property', function ($q) {
+            $q->where('user_id', Auth::id());
+        })->get();
 
         $this->success = true;
         $this->code = Response::HTTP_OK;
@@ -67,6 +68,13 @@ class ApiRentController extends Controller
         
         $user = Auth::user();
         // $responseMidtrans = [];
+        $totalRent = Rent::where('property_id', $property->id)->where('active_status', '!=', 13)->count();
+        if ($totalRent >= $property->room_total) {
+            $this->code = Response::HTTP_UNPROCESSABLE_ENTITY;
+            $this->success = false;
+            $this->message = 'Kamar penuh !';
+            return $this->json();
+        }
         
         DB::beginTransaction();
         try {
@@ -172,14 +180,14 @@ class ApiRentController extends Controller
             return $validate;
 
         $propertyId = $request->property_id;
-        $status = $request->status; // accepted / deny
+        $status = $request->status; // accepted / delete
         $ref = "";
         switch ($status) {
             case 'accept':
-                $ref = RefStatus::status(RefStatus::ACCEPT)->ref;
+                $ref = RefStatus::STATUS_ACCEPT;
                 break;
             default:
-                $ref = RefStatus::status(RefStatus::PENDING)->ref;
+                $ref = RefStatus::STATUS_DELETE;
                 break;
         }
 

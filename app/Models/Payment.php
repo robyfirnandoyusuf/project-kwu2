@@ -9,4 +9,8 @@ class Payment extends Model
 {
     use HasFactory;
     
+    public function refStatus()
+    {
+        return $this->hasOne(RefStatus::class, 'ref', 'status_payment');
+    }
 }

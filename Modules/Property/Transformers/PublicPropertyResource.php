@@ -38,7 +38,7 @@ class PublicPropertyResource extends JsonResource
                 ]
             ],
             "facilities"    => $this->facilities,
-            "room_total"    => $this->room_total,
+            "room_total"    => $this->sisa_kamar,
             "is_featured"   => $this->is_featured,
             "is_discount"   => $this->is_discount != null ? $this->is_discount : 0 ,
             "type"          => $this->type,
