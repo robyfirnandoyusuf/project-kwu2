@@ -2,11 +2,14 @@
 
 namespace Modules\Payment\Http\Controllers;
 
+use App\Models\Mutasi;
 use App\Models\Payment;
 use App\Models\RefStatus;
+use App\Models\Rent;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class PaymentController extends Controller
@@ -57,9 +60,63 @@ class PaymentController extends Controller
             Log::channel('stderr')->debug("Payment using " . $type . " for transaction order_id: " . $order_id . " is canceled.");
         }
 
-        $payment = Payment::where('code', $order_id)->first();
-        $payment->status_payment = $refStatus;
-        $payment->payment_response = json_encode((array)$notif);
-        $payment->save();
+        DB::beginTransaction();
+        try {
+            // $order_id = 'P21063016391223';
+            //insert payment
+            $payment = Payment::where('code', $order_id)->first();
+            $payment->status_payment = $refStatus;
+            $payment->payment_response = json_encode((array)$notif);
+            $payment->save();
+            //insert mutasi penyewa
+            $rent = Rent::with('property')->wherePaymentId($payment->id)->first();
+            $mPenyewa = Mutasi::whereUserId($rent->user_id)->orderBy('id', 'desc');
+
+            $dbPenyewa = 0;
+            $crPenyewa = 0;
+            $saldoPenyewa = 0;
+            if ($mPenyewa->count() <= 0) { //jika belum ada mutasi artinya saldo 0
+                $dbPenyewa = $payment->amount;
+                $crPenyewa = $payment->amount;
+            }  else {
+                $dbPenyewa = $payment->amount;
+                $crPenyewa = $payment->amount;
+                $saldoPenyewa = $mPenyewa->first()->saldo;
+            }
+            $mutasi = new Mutasi();
+            $mutasi->user_id = $rent->user_id;
+            $mutasi->db = $dbPenyewa;
+            $mutasi->cr = $crPenyewa;
+            $mutasi->saldo = $saldoPenyewa;
+            $mutasi->desc = 'Bayar kos '.$payment->code;
+            $mutasi->save();
+
+            //insert mutasi pemilik
+            $mMitra = Mutasi::whereUserId($rent->property->first()->user_id)->orderBy('id', 'desc');
+
+            $dbMitra = 0;
+            $crMitra = 0;
+            $saldoMitra = 0;
+            if ($mMitra->count() <= 0) {
+                $dbMitra = $payment->amount;
+                $saldoMitra = $payment->amount;
+            }  else {
+                $dbMitra = $payment->amount;
+                $crMitra = 0;
+                $saldoMitra = $mMitra->first()->saldo + $payment->amount;
+            } 
+            $mutasi = new Mutasi();
+            $mutasi->user_id = $rent->property->first()->user_id;
+            $mutasi->db = $dbMitra;
+            $mutasi->cr = $crMitra;
+            $mutasi->saldo = $saldoMitra;
+            $mutasi->desc = 'Pembayaran Kos '.$payment->code;
+            $mutasi->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e->getMessage());
+        }
     }
 }

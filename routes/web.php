@@ -59,3 +59,18 @@ Route::get('/', function() {
     return redirect()->route('admin.auth.get');
 });
 Route::post('/get-city', [CityController::class, 'index'])->name('select.city');
+
+Route::any('/playground', function() {
+    $mPenyewa = \App\Models\Mutasi::whereUserId(\Auth::id())->orderBy('id', 'desc');
+    \Log::channel('stderr')->debug("debug : " . $mPenyewa->count());
+    if ($mPenyewa->count() <= 0) {
+        // dd(!empty($mPenyewa->first()));
+        $mutasi = new \App\Models\Mutasi();
+        $mutasi->user_id = \Auth::id();
+        $mutasi->db = 1;
+        $mutasi->cr = 1;
+        $mutasi->saldo = 31337 + (!empty($mPenyewa->first()) ? $mPenyewa->first()->saldo : 0);
+        $mutasi->desc = 'Bayar kos '."xxxx";
+        $mutasi->save();
+    }
+});

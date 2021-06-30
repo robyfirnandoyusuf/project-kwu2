@@ -19,5 +19,13 @@ Route::group(['prefix'=>'v1', 'middleware' => ['api']], function () {
             'uses' => 'PaymentController@webhook',
             'as' => 'api.payment.webhook'
         ]);
+        Route::group(['middleware' => 'jwt.verify'], function() {
+            Route::get('get-mutasi', 'ApiPaymentController@index');
+
+            Route::post('withdraw', [
+                'uses' => 'ApiPaymentController@withdraw',
+                'as' => 'api.payment.withdraw'
+            ]);
+        });
     });
 });
