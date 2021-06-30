@@ -244,7 +244,7 @@ class ApiRentController extends Controller
                     ],
                     'status' => [
                         'required',
-                        Rule::in([RefStatus::STATUS_ACCEPT, RefStatus::STATUS_DELETE])
+                        Rule::in(['accept', 'delete'])
                     ],
                 ];
                 break;
