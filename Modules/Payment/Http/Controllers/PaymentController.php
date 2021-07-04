@@ -6,6 +6,8 @@ use App\Models\Mutasi;
 use App\Models\Payment;
 use App\Models\RefStatus;
 use App\Models\Rent;
+use App\Models\Withdraw;
+use App\Traits\AjaxTrait;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -14,6 +16,64 @@ use Log;
 
 class PaymentController extends Controller
 {
+    use AjaxTrait;
+    public function withdraw_index()
+    {
+        $data['title'] = 'Withdraw';
+        return view('payment::admin.payment.index', $data);
+    }
+
+    public function datatable_withdraw()
+    {
+        $model = Withdraw::with(['user', 'approveBy'])
+                    ->orderBy('created_at', 'desc');
+        // dd($model->get()->toArray());
+        $dTable = DataTables()->eloquent($model)
+            ->addIndexColumn()
+            ->editColumn('nama', function ($data) {
+                return $data->user->name;
+            })
+            ->editColumn('nominal', function ($data) {
+                return $data->nominal;
+            })
+            ->editColumn('status', function ($data) {
+                return ucfirst(RefStatus::ref($data->status)->title);
+            })
+            ->editColumn('created_at', function ($data) {
+                return $data->dibuat_tgl ? $data->dibuat_tgl : "-";
+            })
+            ->editColumn('approve_by', function ($data) {
+                return !empty($data->approveBy) ? ucfirst($data->approveBy->name) : "-" ;
+            })
+            ->addColumn('action', function ($data) {
+                $btn = "";
+                $btn .= '
+                        <select class="form-control select-status" data-style="btn btn-primary btn-round" data-size="7" id="'.$data->id.'">
+                            <option value="11" '.($data->status == 11 ? "selected" : "").'>Waiting</option>
+                            <option value="6" '.($data->status == 6 ? "selected" : "").'>Deny</option>
+                            <option value="12" '.($data->status == 12 ? "selected" : "").'>Accept</option>
+                        </select>
+                        ';
+                return $btn;
+            })
+            ->rawColumns(['action']);
+
+        return $dTable->make(true);
+    }
+
+    public function change_status(Withdraw $wd, $status)
+    {
+        try {
+            $wd->status = $status;
+            $wd->approve_by = \Auth::id();
+            $wd->save();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('notif_error', 'Gagal merubah status withdrawal');
+        }
+        
+        return redirect()->back()->with('notif_success', 'Berhasil merubah status withdrawal');
+    }
+
     /**
      * Display a listing of the resource.
      * @return Renderable

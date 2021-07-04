@@ -57,11 +57,11 @@ class ApiPaymentController extends Controller
 
             $this->code = \Illuminate\Http\Response::HTTP_OK;
             $this->success = true;
-            $this->message = 'Berhasil !';
+            $this->data = 'Berhasil !';
         } catch (\Exception $e) {
             $this->code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;
             $this->success = false;
-            $this->message = 'Gagal !';
+            $this->data = 'Gagal !';
         }
 
         return $this->json();

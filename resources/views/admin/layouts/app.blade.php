@@ -172,7 +172,7 @@
 <!--  Plugin for Date Time Picker and Full Calendar Plugin-->
 <script src="/backend-assets/js/moment.min.js"></script>
 <!--  Charts Plugin -->
-<script src="/backend-assets/js/chartist.min.js"></script>
+{{-- <script src="/backend-assets/js/chartist.min.js"></script> --}}
 <!--  Plugin for the Wizard -->
 <script src="/backend-assets/js/jquery.bootstrap-wizard.js"></script>
 <!--  Notifications Plugin    -->
@@ -228,9 +228,9 @@
     $(document).ready(function() {
 
         // Javascript method's body can be found in assets/js/demos.js
-        demo.initDashboardPageCharts();
+        //demo.initDashboardPageCharts();
 
-        demo.initVectorMap();
+        //demo.initVectorMap();
     });
 </script>
 @yield('script')

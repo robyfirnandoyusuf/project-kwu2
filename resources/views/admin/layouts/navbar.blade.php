@@ -51,5 +51,11 @@
                 <p>Property</p>
             </a>
         </li>
+        <li>
+            <a href="{{ route('admin.payment.withdraw') }}">
+                <i class="material-icons">monetization_on</i>
+                <p>Withdraw</p>
+            </a>
+        </li>
     </ul>
 </div>

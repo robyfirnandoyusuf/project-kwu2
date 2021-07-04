@@ -18,7 +18,7 @@ class CreateWithdrawsTable extends Migration
             $table->bigInteger('user_id');
             $table->string('nominal');
             $table->string('status');
-            $table->bigInteger('approve_by');
+            $table->bigInteger('approve_by')->nullable();
             $table->timestamps();
         });
     }

@@ -11,6 +11,25 @@
 |
 */
 
+
 Route::prefix('payment')->group(function() {
     Route::get('/', 'PaymentController@index');
+});
+
+Route::group(['middleware' => 'isadmin', 'prefix' => 'admin'], function () {
+    Route::get('withdrawal', [
+        'uses' => 'PaymentController@withdraw_index',
+        'as' => 'admin.payment.withdraw'
+    ]);
+
+    Route::get('withdraw/{wd}/{status}', [
+        'uses' => 'PaymentController@change_status',
+        'as' => 'admin.payment.withdraw.status'
+    ]);
+
+     // datatable
+     Route::get('/dt-payment-withdraw', [
+        'uses' => 'PaymentController@datatable_withdraw',
+        'as' => 'admin.dt.withdraw'
+    ]);
 });

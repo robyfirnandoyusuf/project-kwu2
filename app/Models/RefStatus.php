@@ -42,4 +42,9 @@ class RefStatus extends Model
     {
         return $query->where('title', $status)->first();
     }
+
+    public function scopeRef($query, $ref)
+    {
+        return $query->where('ref', $ref)->first();
+    }
 }
