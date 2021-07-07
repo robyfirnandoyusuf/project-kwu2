@@ -24,7 +24,7 @@ class ApiFavoriteController extends Controller
      */
     public function index(Request $request)
     {
-        $favorite = Favorite::with(['property', 'user'])->where('user_id', Auth::id())->paginate($this->limit);
+        $favorite = Favorite::with(['property.gallery', 'user'])->where('user_id', Auth::id())->paginate($this->limit);
         $this->status = true;
         $this->code = \Illuminate\Http\Response::HTTP_OK;
         $this->data = $favorite;
