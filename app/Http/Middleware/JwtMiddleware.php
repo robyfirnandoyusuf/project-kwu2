@@ -24,7 +24,7 @@ class JwtMiddleware
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'data' => 'Token is invalid !',
+                    'message' => 'Token is invalid !',
                 ], Response::HTTP_UNAUTHORIZED, [], JSON_PRETTY_PRINT);
             }
 
@@ -32,18 +32,18 @@ class JwtMiddleware
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 return response()->json([
                     'success' => false,
-                    'data' => 'Token is invalid !',
+                    'message' => 'Token is invalid !',
                 ], Response::HTTP_UNAUTHORIZED, [], JSON_PRETTY_PRINT);
 
             } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {    
                 return response()->json([
                     'success' => false,
-                    'data' => 'Token is expired !',
+                    'message' => 'Token is expired !',
                 ], Response::HTTP_UNAUTHORIZED);
             } else {
                 return response()->json([
                     'success' => false,
-                    'data' => 'Token is expired !',
+                    'message' => 'Token is expired !',
                 ], Response::HTTP_UNAUTHORIZED, [], JSON_PRETTY_PRINT);
             }
         }

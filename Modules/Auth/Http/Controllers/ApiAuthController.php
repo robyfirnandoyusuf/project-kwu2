@@ -155,6 +155,7 @@ class ApiAuthController extends Controller
             $this->code = Response::HTTP_OK;
         } catch (\Exception $e) {
             $this->success = false;
+            $this->message = "Error When update data";
             $this->code = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
         

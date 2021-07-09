@@ -104,6 +104,7 @@ class APIPropertyController extends Controller
         if (!$this->idorChecker($property->user_id)) {
             $this->success = false;
             $this->code = Response::HTTP_BAD_REQUEST;
+            $this->message = "Error when get Property";
             return $this->json(); 
         }
         
