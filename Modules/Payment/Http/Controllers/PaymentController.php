@@ -91,6 +91,7 @@ class PaymentController extends Controller
         $fraud = $notif->fraud_status;
 
         $refStatus = RefStatus::STATUS_PAYMENT[$transaction];
+        $rentStatus = 2;
         $msg = '';
         if ($transaction == 'capture') {
             // For credit card transaction, we need to check whether transaction is challenge by FDS or not
@@ -105,10 +106,12 @@ class PaymentController extends Controller
                 }
                 $msg = "Pembayaran Kos $order_id Sudah Terbayar, Silahkan tunggu konfirmasi kami !";
             }
+            $rentStatus = 1;
         } else if ($transaction == 'settlement') {
             // TODO set payment status in merchant's database to 'Settlement'
             Log::channel('stderr')->debug("Transaction order_id: " . $order_id . " successfully transfered using " . $type);
             $msg = "Pembayaran Kos $order_id Sudah Terbayar !";
+            $rentStatus = 1;
         } else if ($transaction == 'pending') {
             // TODO set payment status in merchant's database to 'Pending'
             Log::channel('stderr')->debug("Waiting customer to finish transaction order_id: " . $order_id . " using " . $type);
@@ -135,7 +138,9 @@ class PaymentController extends Controller
             $payment->save();
             //insert mutasi penyewa
             $rent = Rent::with('property')->wherePaymentId($payment->id)->first();
-            $this->_sendNotification([$rent->user_id], $msg);
+            $rent->active_status = $rentStatus;
+            $rent->save();
+            // $this->_sendNotification([$rent->user_id], $msg);
             $mPenyewa = Mutasi::whereUserId($rent->user_id)->orderBy('id', 'desc');
 
             $dbPenyewa = 0;
