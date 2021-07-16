@@ -11,7 +11,7 @@ class Rent extends Model
 
     public function property()
     {
-        return $this->hasMany(Property::class, 'id', 'property_id');
+        return $this->hasOne(Property::class, 'id', 'property_id');
     }
 
     public function payment()
