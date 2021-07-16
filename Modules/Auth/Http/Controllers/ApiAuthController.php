@@ -82,10 +82,13 @@ class ApiAuthController extends Controller
         $this->success = true;
         $this->code = \Illuminate\Http\Response::HTTP_OK;
         $user = User::with('media:id,file')->whereId(Auth::id())->first();
+        /* update token */
+        $user->device_token = $request->token;
+        $user->save();
         if ($user->media) {
             $user->media->file = URL::to('/storage/'.$user->media->file);
         }
-
+        
         $this->data = [
             'token' => $token,
             'user' => $user

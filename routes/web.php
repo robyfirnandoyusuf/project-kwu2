@@ -13,6 +13,7 @@ use App\Http\Controllers\Frontend\{
     HomeController,
     PropertyController as FrontendPropertyController
 };
+use LaravelFCM\Message\PayloadNotificationBuilder;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,7 +62,37 @@ Route::get('/', function() {
 Route::post('/get-city', [CityController::class, 'index'])->name('select.city');
 
 Route::any('/playground', function() {
-    $mPenyewa = \App\Models\Mutasi::whereUserId(\Auth::id())->orderBy('id', 'desc');
+    $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();
+          
+        $SERVER_API_KEY = 'XXXXXX';
+  
+        $data = [
+            "registration_ids" => $firebaseToken,
+            "notification" => [
+                "title" => 'title',
+                "body" => 'woi'  
+            ]
+        ];
+        $dataString = json_encode($data);
+    
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+    
+        $ch = curl_init();
+      
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+               
+        $response = curl_exec($ch);
+  
+        dd($response);
+    /* $mPenyewa = \App\Models\Mutasi::whereUserId(\Auth::id())->orderBy('id', 'desc');
     \Log::channel('stderr')->debug("debug : " . $mPenyewa->count());
     if ($mPenyewa->count() <= 0) {
         // dd(!empty($mPenyewa->first()));
@@ -72,5 +103,5 @@ Route::any('/playground', function() {
         $mutasi->saldo = 31337 + (!empty($mPenyewa->first()) ? $mPenyewa->first()->saldo : 0);
         $mutasi->desc = 'Bayar kos '."xxxx";
         $mutasi->save();
-    }
+    } */
 });
