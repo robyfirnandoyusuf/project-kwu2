@@ -179,7 +179,7 @@ class ApiRentController extends Controller
         if (!empty($validate))
             return $validate;
 
-        $propertyId = $request->property_id;
+        $rentId = $request->rent_id;
         $status = $request->status; // accepted / delete
         $ref = "";
         switch ($status) {
@@ -192,7 +192,7 @@ class ApiRentController extends Controller
         }
 
         try {
-            Rent::where(['user_id' => Auth::id(), 'property_id' => $propertyId])->update([
+            Rent::where(['id' => $rentId])->update([
                 'active_status' => $ref
             ]);
         } catch (\Exception $e) {
@@ -238,9 +238,8 @@ class ApiRentController extends Controller
                 break;
             case str_contains($uri, "/rent/update"):
                 $rules = [
-                    'property_id' => [
+                    'rent_id' => [
                         'required',
-                        Rule::exists('properties', 'id')
                     ],
                     'status' => [
                         'required',
