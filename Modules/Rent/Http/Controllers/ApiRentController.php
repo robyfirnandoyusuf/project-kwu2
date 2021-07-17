@@ -31,7 +31,7 @@ class ApiRentController extends Controller
     public function userRent(Request $request)
     {
         // $type = Auth::user()->role;
-        $rent = Rent::with(['property.gallery', 'payment.refStatus'])->where('user_id', Auth::id())->orderby('id', 'desc')->get();
+        $rent = Rent::with(['property.gallery', 'payment.refStatus'])->where('user_id', Auth::id())->orderby('id', 'desc')->paginate(10);
 
         $this->success = true;
         $this->code = Response::HTTP_OK;
