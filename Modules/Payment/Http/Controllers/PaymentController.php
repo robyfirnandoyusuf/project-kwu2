@@ -140,7 +140,7 @@ class PaymentController extends Controller
             $rent = Rent::with('property')->wherePaymentId($payment->id)->first();
             $rent->active_status = $rentStatus;
             $rent->save();
-            // $this->_sendNotification([$rent->user_id], $msg);
+            $this->_sendNotification([$rent->user_id], $msg);
             $mPenyewa = Mutasi::whereUserId($rent->user_id)->orderBy('id', 'desc');
 
             $dbPenyewa = 0;
