@@ -103,8 +103,8 @@ class PaymentController extends Controller
                 } else {
                     // TODO set payment status in merchant's database to 'Success'
                     Log::channel('stderr')->debug("Transaction order_id: " . $order_id . " successfully captured using " . $type);
+                    $msg = "Pembayaran Kos $order_id Sudah Terbayar, Silahkan tunggu konfirmasi kami !";
                 }
-                $msg = "Pembayaran Kos $order_id Sudah Terbayar, Silahkan tunggu konfirmasi kami !";
             }
             $rentStatus = 1;
         } else if ($transaction == 'settlement') {
@@ -140,7 +140,10 @@ class PaymentController extends Controller
             $rent = Rent::with('property')->wherePaymentId($payment->id)->first();
             $rent->active_status = $rentStatus;
             $rent->save();
-            $this->_sendNotification([$rent->user_id], $msg);
+            
+            if ($rentStatus != 1)
+                $this->_sendNotification([$rent->user_id], $msg);
+
             $mPenyewa = Mutasi::whereUserId($rent->user_id)->orderBy('id', 'desc');
 
             $dbPenyewa = 0;
