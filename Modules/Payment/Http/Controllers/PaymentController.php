@@ -141,7 +141,7 @@ class PaymentController extends Controller
             $rent->active_status = $rentStatus;
             $rent->save();
             
-            if ($rentStatus != 1)
+            if ($rentStatus == 1)
                 $this->_sendNotification([$rent->user_id], $msg);
 
             $mPenyewa = Mutasi::whereUserId($rent->user_id)->orderBy('id', 'desc');
