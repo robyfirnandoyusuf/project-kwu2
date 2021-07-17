@@ -104,9 +104,9 @@ class PaymentController extends Controller
                     // TODO set payment status in merchant's database to 'Success'
                     Log::channel('stderr')->debug("Transaction order_id: " . $order_id . " successfully captured using " . $type);
                     $msg = "Pembayaran Kos $order_id Sudah Terbayar, Silahkan tunggu konfirmasi kami !";
+                    $rentStatus = 1;
                 }
             }
-            $rentStatus = 1;
         } else if ($transaction == 'settlement') {
             // TODO set payment status in merchant's database to 'Settlement'
             Log::channel('stderr')->debug("Transaction order_id: " . $order_id . " successfully transfered using " . $type);
